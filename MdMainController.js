@@ -2,6 +2,7 @@ const markdown = document.getElementById('markdown');
 const printArea = document.getElementById('printArea');
 const previewArea = document.getElementById('previewArea');
 const input = document.getElementById('input');
+
 /*
 A①クリックでinputAreaにfocus、文字入力を可能にする ||| 完了
 A②sbかmbを判定　->　sbでA③mbでA④ |||　完了
@@ -77,6 +78,7 @@ function printText(){
     printArea.insertAdjacentHTML('beforeend',previewArea.innerHTML);
     previewArea.firstElementChild.textContent = '';
     input.value = '';
+    previewArea.innerHTML = '<p></p>';
 }
 
 
@@ -90,7 +92,7 @@ function keydownEvents(e){
         }
     }//Enter
     if(previewArea.firstElementChild.textContent !== '' && e.shiftKey === true && e.key ==='Enter'){
-        newLine();//shiftEnter
+        nLine();//shiftEnter
     }
 }
 
@@ -98,10 +100,10 @@ function addText(){
     printArea.lastElementChild.lastChild.textContent = input.value;
 }
 
-function newLine(){
+function nLine(){
     printArea.insertAdjacentHTML('beforeend','<p></p>');
-    printArea.lastElementChild.innerHTML = previewArea.textContent + '<br>';
-    printArea.lastElementChild.insertAdjacentText('beforeend','');
+    printArea.lastElementChild.innerHTML = previewArea.textContent + '<br>&nbsp';
+    printArea.lastElementChild.insertAdjacentText('beforeend','&nbsp');
     input.value = '';
     addText();
 }
