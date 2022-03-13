@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>headは後で消すの忘れずに</title>
+    <style>
+        #markdown {
+            width: 360px;
+            height: 600px;
+        }
+        #printArea {
+            background-color: lightblue;
+        }
+        #previewArea {
+            background-color: lightpink;
+        }
+        input {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<section id="markdown">
+    <div id="printArea"></div>
+    <div id="previewArea"><p></p></div>
+    <div id="temporalyStrorage"><p></p></div>
+    <input type="text" id="input">
+
+    <script src="./MdMainController.js"></script>
+</section>
+</html>
