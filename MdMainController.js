@@ -41,7 +41,7 @@ input.addEventListener('input',determineStringType);
 input.addEventListener('keydown',keydownEvents);
 
 function determineStringType(e){
-    if(!input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){//シングルバイト
+    if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){//シングルバイト
         tagChenger();
     }
     if(input.value.match(/[^\x01-\x7E]/)){//マルチバイト
@@ -88,7 +88,7 @@ function keydownEvents(e){
         if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
             printText();
         }
-        if(!input.value.match(/[^\x01-\x7E]/)){
+        if(input.value.match(/[\x01-\x7E]/)){
             printText();
         }
     }
@@ -96,7 +96,12 @@ function keydownEvents(e){
 //shiftEnter
     if(previewArea.firstElementChild.textContent !== '' && previewArea.innerHTML.match(/^[\<p\>].*/) &&e.shiftKey === true && e.key ==='Enter'){
         if(previewArea.firstElementChild.tagName === 'P'){
-            nLine();
+            if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
+                nLine();
+            }
+            if(input.value.match(/[\x01-\x7E]/)){
+                nLine();
+            }
         }
     }
 }
