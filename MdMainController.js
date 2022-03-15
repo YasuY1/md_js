@@ -44,7 +44,7 @@ function determineStringType(e){
     if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){//シングルバイト
         tagChenger();
     }
-    if(input.value.match(/[^\x01-\x7E]/)){//マルチバイト
+    if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === true){//マルチバイト
         insertText();
     }
 }
@@ -59,7 +59,7 @@ const headings = [
     [ 'h2 ' , '** ' ],
 ];
 
-function tagChenger(){
+function tagChenger(e){
     headings.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
             previewArea.innerHTML = '<'+headingTags[index]+'></'+headingTags[index]+'>';
@@ -73,6 +73,24 @@ function insertText(){
     previewArea.firstElementChild.textContent = input.value;
 }
 
+function addText(){
+    printArea.lastElementChild.insertAdjacentText('beforeend',previewArea.firstElementChild.innerHTML);
+}
+
+function nLine(){//shiftEnterの後
+    if(printArea.childElementCount === 0){
+        printArea.insertAdjacentHTML('beforeend','<p></p>');
+    }
+    if(printArea.lastElementChild.tagName !== 'P'){
+        printArea.insertAdjacentHTML('beforeend','<p></p>');
+    }
+    if(printArea.childElementCount > 1){
+        printArea.lastElementChild.insertAdjacentHTML('beforeend','<br>' + previewArea.textContent);
+        previewArea.innerHTML = '<p></p>';//previewの初期化
+        input.value = '';//inputの初期化
+        addText();
+    }
+}
 
 function printText(){
     printArea.insertAdjacentHTML('beforeend',previewArea.innerHTML);
@@ -104,21 +122,12 @@ function keydownEvents(e){
             }
         }
     }
-}
 
-function addText(){
-    printArea.lastElementChild.insertAdjacentText('beforeend',previewArea.firstElementChild.innerHTML);
-}
-
-function nLine(){//shiftEnterの後
-    if(printArea.childElementCount === 0){
-        printArea.insertAdjacentHTML('beforeend','<p></p>');
+//backspace
+    if(input.value === '' && printArea.innerHTML !== '' && e.key === 'Backspace'){
+        if(printArea.lastElementChild.tagName === 'P'){
+            console.log('P');
+        }
+        console.log('P以外');
     }
-    if(printArea.lastElementChild.tagName !== 'P'){
-        printArea.insertAdjacentHTML('beforeend','<p></p>');
-    }
-    printArea.lastElementChild.insertAdjacentHTML('beforeend',previewArea.textContent + '<br>');
-    previewArea.innerHTML = '<p></p>';//previewの初期化
-    input.value = '';//inputの初期化
-    addText();
 }
