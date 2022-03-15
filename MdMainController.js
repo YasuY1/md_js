@@ -128,6 +128,11 @@ function keydownEvents(e){
         if(printArea.lastElementChild.tagName === 'P'){
             console.log('P');
         }
-        console.log('P以外');
+        if(printArea.lastElementChild.tagName !== 'P'){
+            const tag = printArea.lastElementChild.tagName.toLowerCase();
+            previewArea.innerHTML = '<'+tag+'></'+tag+'>';
+            input.value = printArea.lastElementChild.textContent;
+            printArea.removeChild(printArea.lastElementChild);
+        }
     }
 }
