@@ -83,6 +83,7 @@ function printText(){
 
 
 function keydownEvents(e){
+//Enter
     if(previewArea.firstElementChild.textContent !== '' && e.shiftKey === false && e.key ==='Enter'){
         if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
             printText();
@@ -90,20 +91,29 @@ function keydownEvents(e){
         if(!input.value.match(/[^\x01-\x7E]/)){
             printText();
         }
-    }//Enter
-    if(previewArea.firstElementChild.textContent !== '' && e.shiftKey === true && e.key ==='Enter'){
-        nLine();//shiftEnter
+    }
+
+//shiftEnter
+    if(previewArea.firstElementChild.textContent !== '' && previewArea.innerHTML.match(/^[\<p\>].*/) &&e.shiftKey === true && e.key ==='Enter'){
+        if(previewArea.firstElementChild.tagName === 'P'){
+            nLine();
+        }
     }
 }
 
 function addText(){
-    printArea.lastElementChild.lastChild.textContent = input.value;
+    printArea.lastElementChild.insertAdjacentText('beforeend',previewArea.firstElementChild.innerHTML);
 }
 
-function nLine(){
-    printArea.insertAdjacentHTML('beforeend','<p></p>');
-    printArea.lastElementChild.innerHTML = previewArea.textContent + '<br>&nbsp';
-    printArea.lastElementChild.insertAdjacentText('beforeend','&nbsp');
-    input.value = '';
+function nLine(){//shiftEnterの後
+    if(printArea.childElementCount === 0){
+        printArea.insertAdjacentHTML('beforeend','<p></p>');
+    }
+    if(printArea.lastElementChild.tagName !== 'P'){
+        printArea.insertAdjacentHTML('beforeend','<p></p>');
+    }
+    printArea.lastElementChild.insertAdjacentHTML('beforeend',previewArea.textContent + '<br>');
+    previewArea.innerHTML = '<p></p>';//previewの初期化
+    input.value = '';//inputの初期化
     addText();
 }
