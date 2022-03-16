@@ -29,14 +29,20 @@ function determineStringType(e){
 const headingTags = [
     'h1',
     'h2',
+    'h3',
+    'h4',
+    'h5',
 ];
 
 const headings = [
-    [ 'h1 ' , '* ' ],
-    [ 'h2 ' , '** ' ],
+    [ 'h1 ' , '# ' ],
+    [ 'h2 ' , '## ' ],
+    [ 'h3 ' , '### ' ],
+    [ 'h4 ' , '#### ' ],
+    [ 'h5 ' , '##### ' ],
 ];
 
-function tagChenger(e){
+function tagChenger(){
     headings.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
             previewArea.innerHTML = '<'+headingTags[index]+'></'+headingTags[index]+'>';
