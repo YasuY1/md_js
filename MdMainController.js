@@ -62,17 +62,18 @@ function addText(){
 
 function nLine(){//shiftEnterの後
     if(printArea.childElementCount === 0){
-        return false;
-        // printArea.insertAdjacentHTML('beforeend','<p></p>');
-    }
-    if(printArea.lastElementChild.tagName !== 'P'){
-        printArea.insertAdjacentHTML('beforeend','<p></p>');
+        printArea.innerHTML = previewArea.innerHTML;
+        previewArea.innerHTML = '<p></p>';
+        input.value = '';
     }
     if(printArea.childElementCount > 0){
         printArea.lastElementChild.insertAdjacentHTML('beforeend','<br>' + previewArea.textContent);
-        previewArea.innerHTML = '<p></p>';//previewの初期化
-        input.value = '';//inputの初期化
+        previewArea.innerHTML = '<p></p>';
+        input.value = '';
         addText();
+    }
+    if(printArea.childElementCount === 2){
+        printArea.lastElementChild.removeChild(printArea.lastElementChild.lastElementChild);
     }
 }
 
