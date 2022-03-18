@@ -72,9 +72,10 @@ function nLine(){//shiftEnterの後
         input.value = '';
         addText();
     }
-    if(printArea.childElementCount === 2){
-        printArea.lastElementChild.removeChild(printArea.lastElementChild.lastElementChild);
-    }
+    if(printArea.lastElementChild.lastChild.wholeText === ""){
+        printArea.lastElementChild.removeChild(printArea.lastElementChild.lastChild);
+        printArea.lastElementChild.removeChild(printArea.lastElementChild.lastChild);
+    }//mb->sb時previousがbrで""が返るバグの回避
 }
 
 function printText(){
@@ -85,31 +86,35 @@ function printText(){
 }
 
 
-function keydownEvents(e){
+function keydownEvents(e){//動かすな！
 //Enter
     if(previewArea.firstElementChild.textContent !== '' && e.shiftKey === false && e.key ==='Enter'){
-        if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
-            printText();
-        }
         if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){
             printText();
         }
-    }
+        if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
+            printText();
+        }
+    }//動かすな！
 
 //shiftEnter
-    if(previewArea.innerHTML.match(/^[\<p\>].*/) && e.shiftKey === true && e.key ==='Enter'){
-        if(previewArea.firstElementChild.tagName === 'P'){
-            if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
-                nLine();
-            }
-            if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){
-                nLine();
-            }
+    if(printArea.childElementCount !== 0 && printArea.lastElementChild.tagName === 'P' && e.shiftKey === true && e.key ==='Enter'){
+        if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){
+            nLine();
+        }
+        if(input.value.match(/[^\x01-\x7E]/) && e.isComposing === false){
+            nLine();
         }
     }
 
 //backspace
     if(input.value === '' && printArea.innerHTML !== '' && e.key === 'Backspace'){
+        // if(printArea.lastElementChild.textContent.match(/[\x01-\x7E]/)){
+
+        // }
+        // if(printArea.lastElementChild.textContent.match(/[^\x01-\x7E]/)){
+
+        // }
         if(printArea.lastElementChild.tagName === 'P'){
             previewArea.innerHTML = '<p></p>';
             input.value = printArea.lastElementChild.lastChild.textContent;
@@ -122,4 +127,4 @@ function keydownEvents(e){
             printArea.removeChild(printArea.lastElementChild);
         }
     }
-}
+}//*Enter後BSが入らない。mb文字残りsb最初の文字残り
