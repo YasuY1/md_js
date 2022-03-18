@@ -120,8 +120,15 @@ function keydownEvents(e){//動かすな！
             input.value = printArea.lastElementChild.textContent;
             printArea.removeChild(printArea.lastElementChild);
         }
-        if(printArea.lastChild.textContent === ''){
+        if(printArea.lastElementChild.textContent === ""){//空の<p>タグバグの修正
             printArea.removeChild(printArea.lastElementChild);
-        }//空の<p>タグバグの修正
+        }
+        input.addEventListener('keydown',(e)=>{//一文字消えないバグの修正
+            if(e.key === 'Backspace'){
+                if(input.value.length === 1){
+                    previewArea.innerHTML = '<p></p>';
+                }
+            }
+        });
     }
 }//*mb文字残りsb最初の文字残り
