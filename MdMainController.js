@@ -109,12 +109,6 @@ function keydownEvents(e){//動かすな！
 
 //backspace
     if(input.value === '' && printArea.innerHTML !== '' && e.key === 'Backspace'){
-        // if(printArea.lastElementChild.textContent.match(/[\x01-\x7E]/)){
-
-        // }
-        // if(printArea.lastElementChild.textContent.match(/[^\x01-\x7E]/)){
-
-        // }
         if(printArea.lastElementChild.tagName === 'P'){
             previewArea.innerHTML = '<p></p>';
             input.value = printArea.lastElementChild.lastChild.textContent;
@@ -126,5 +120,8 @@ function keydownEvents(e){//動かすな！
             input.value = printArea.lastElementChild.textContent;
             printArea.removeChild(printArea.lastElementChild);
         }
+        if(printArea.lastChild.textContent === ''){
+            printArea.removeChild(printArea.lastElementChild);
+        }//空の<p>タグバグの修正
     }
-}//*Enter後BSが入らない。mb文字残りsb最初の文字残り
+}//*mb文字残りsb最初の文字残り
