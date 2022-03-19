@@ -120,10 +120,12 @@ function keydownEvents(e){//動かすな！
             input.value = printArea.lastElementChild.textContent;
             printArea.removeChild(printArea.lastElementChild);
         }
-        if(printArea.lastElementChild.textContent === ""){//空の<p>タグバグの修正
-            printArea.removeChild(printArea.lastElementChild);
+        if(printArea.childElementCount !== 0){//空の<p>タグバグの修正
+            if(printArea.lastElementChild.textContent === ""){
+                printArea.removeChild(printArea.lastElementChild);
+            }
         }
-        input.addEventListener('keydown',(e)=>{//一文字消えないバグの修正
+        input.addEventListener('keydown',(e)=>{//一文字消えないバグの修正sbOK
             if(e.key === 'Backspace'){
                 if(input.value.length === 1){
                     previewArea.innerHTML = '<p></p>';
@@ -131,4 +133,4 @@ function keydownEvents(e){//動かすな！
             }
         });
     }
-}//*mb文字残りsb最初の文字残り
+}//*mbプレビュー非表示バグ
