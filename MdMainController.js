@@ -109,7 +109,7 @@ function keydownEvents(e){//動かすな！
 
 //backspace
     if(input.value === '' && printArea.innerHTML !== '' && e.key === 'Backspace'){
-        if(printArea.lastElementChild.tagName === 'P'){
+        if(printArea.lastElementChild.tagName === 'P'){//修正箇所mb時プレビュー非表示
             previewArea.innerHTML = '<p></p>';
             input.value = printArea.lastElementChild.lastChild.textContent;
             printArea.lastElementChild.removeChild(printArea.lastElementChild.lastChild);
@@ -120,6 +120,10 @@ function keydownEvents(e){//動かすな！
             input.value = printArea.lastElementChild.textContent;
             printArea.removeChild(printArea.lastElementChild);
         }
+
+        // if(input.value.match(/[^\x01-\x7E]/)){
+
+        // }
         if(printArea.childElementCount !== 0){//空の<p>タグバグの修正
             if(printArea.lastElementChild.textContent === ""){
                 printArea.removeChild(printArea.lastElementChild);
