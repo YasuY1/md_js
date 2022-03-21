@@ -2,7 +2,7 @@ const markdown = document.getElementById('markdown');
 const printArea = document.getElementById('printArea');
 const previewArea = document.getElementById('previewArea');
 const input = document.getElementById('input');
-
+//↓後で分離
 const headingTags = [
     'h1',
     'h2',
@@ -84,13 +84,17 @@ class ListCommandController extends HeadingCommandController {
         this.commonCommands();
     }
 }
+//↑あとで分離
 
+//↓実際の機能
 markdown.addEventListener('click',()=>{
     input.focus();
 });
 
+input.addEventListener('input',insertText,{once:true});
 input.addEventListener('input',determineStringType);
 input.addEventListener('keydown',keydownEvents);
+// insertText();
 
 function determineStringType(e){
     if(input.value.match(/[\x01-\x7E]/) && e.isComposing === false){//シングルバイト
@@ -105,8 +109,8 @@ function tagChenger(){
     const heading = new HeadingCommandController(headings,headingTags,previewArea);
     heading.headingCommands();
 
-    const list = new ListCommandController(listCommands,listTags,printArea);
-    list.listCommands();
+    const lists = new ListCommandController(listCommands,listTags,printArea);
+    lists.listCommands();
 }
 
 function tagSellector(){
@@ -125,11 +129,42 @@ function tagSellector(){
 }
 
 function insertLines(){
-    console.log(printArea.getElementsByTagName('ul'));
+    listTags.forEach(function(tag){
+        const parent = printArea.getElementsByTagName(tag)[printArea.getElementsByTagName(tag).length - 1];
+        if(parent && parent.childElementCount === 0 ){
+            parent.insertAdjacentHTML('beforeend','<li></li>');
+            input.addEventListener('input',insertLineText);
+        };
+    });
+}
+
+function insertLineText(){//Enter処理
+    listTags.forEach(function(tag){
+        const parent = printArea.getElementsByTagName(tag)[printArea.getElementsByTagName(tag).length - 1];
+        if(parent){
+            parent.lastElementChild.textContent = input.value;
+        }
+        input.addEventListener('keydown',(e)=>{
+            if(e.key === 'Enter' && e.shiftKey === false){//can't difined insertAdjacentHTML(ERR)
+                parent.insertAdjacentHTML('beforeend','<li></li>');
+                input.value = '';
+                insertLineText();
+            }
+            if(e.key === 'Enter' && e.shiftKey === true){
+                console.log('ok');//だめ
+            }
+        },{once:true});
+    });
 }
 
 function insertText(){
     input.addEventListener('input',()=>{
+        if(printArea.childElementCount !== 0){
+            if(printArea.lastElementChild.tagName === 'UL' || printArea.lastElementChild.tagName === 'OL'){
+                previewArea.firstElementChild.textContent = '';
+                return false;
+            }
+        }
         previewArea.firstElementChild.textContent = input.value;
     });
 }
