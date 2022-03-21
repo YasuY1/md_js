@@ -29,20 +29,15 @@ const listCommands = [
     ['ol ','+ '],
 ];
 
-class CleateParentTags {
+class TagCommandController {
     constructor(commandArray,tagArray){
         this.commandArray = commandArray;
         this.tagArray = tagArray;
     }
 
-    getTag(){
+    commonCommands(){
         const tag = this.tagArray;
-        this.commandArray.forEach(function(command,index){
-            if(input.value === command[0] || input.value === command[1]){
-                previewArea.innerHTML = '<'+tag[index]+'></'+tag[index]+'>';
-                input.value = '';
-                insertText();
-            }
+        this.commandArray.forEach(function(command){
             if(input.value === '\\' + command[0]){
                 input.value = command[0];
                 insertText();
@@ -52,6 +47,41 @@ class CleateParentTags {
                 insertText();
             }
         });
+    }
+}
+
+class HeadingCommandController extends TagCommandController {
+    constructor(commandArray,tagArray,insertArea){
+        super(commandArray,tagArray);
+        this.insertArea = insertArea;
+    }
+
+    headingCommands(){
+        const tag = this.tagArray;
+        const area = this.insertArea;
+        this.commandArray.forEach(function(command,index){
+            if(input.value === command[0] || input.value === command[1]){
+                area.innerHTML = '<'+tag[index]+'></'+tag[index]+'>';
+                input.value = '';
+                tagSellector();
+            }
+        });
+        this.commonCommands();
+    }
+}
+
+class ListCommandController extends HeadingCommandController {
+    listCommands(){
+        const tag = this.tagArray;
+        const area = this.insertArea;
+        this.commandArray.forEach(function(command,index){
+            if(input.value === command[0] || input.value === command[1]){
+                area.innerHTML = '<'+tag[index]+'></'+tag[index]+'>';
+                input.value = '';
+                tagSellector();
+            }
+        });
+        this.commonCommands();
     }
 }
 
@@ -72,21 +102,36 @@ function determineStringType(e){
 }
 
 function tagChenger(){
-    const heading = new CleateParentTags(headings,headingTags);
-    heading.getTag();
+    const heading = new HeadingCommandController(headings,headingTags,previewArea);
+    heading.headingCommands();
 
-    const list = new CleateParentTags(listCommands,listTags);
-    list.getTag();
-
-    insertText();
+    const list = new ListCommandController(listCommands,listTags,printArea);
+    list.listCommands();
 }
 
-// function tagSellector(){
+function tagSellector(){
+    headingTags.forEach(function(head){
+        if(previewArea.firstElementChild.tagName === head.toUpperCase()){
+            insertText();
+        }
+    });
+    listTags.forEach(function(list){
+        if(printArea.childElementCount !== 0){
+            if(printArea.lastElementChild.tagName === list.toUpperCase()){
+                insertLines();
+            }
+        }
+    });
+}
 
-// }
+function insertLines(){
+    console.log(printArea.getElementsByTagName('ul'));
+}
 
 function insertText(){
-    previewArea.firstElementChild.textContent = input.value;
+    input.addEventListener('input',()=>{
+        previewArea.firstElementChild.textContent = input.value;
+    });
 }
 
 function keydownEvents(e){//動かすな！
