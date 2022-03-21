@@ -76,7 +76,7 @@ class ListCommandController extends HeadingCommandController {
         const area = this.insertArea;
         this.commandArray.forEach(function(command,index){
             if(input.value === command[0] || input.value === command[1]){
-                area.innerHTML = '<'+tag[index]+'></'+tag[index]+'>';
+                area.insertAdjacentHTML('beforeend','<'+tag[index]+'></'+tag[index]+'>');
                 input.value = '';
                 tagSellector();
             }
