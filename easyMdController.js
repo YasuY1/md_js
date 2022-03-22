@@ -149,21 +149,23 @@ function insertLineText(){
     }
     function createList(listTag){
         listTag.lastElementChild.textContent = input.value;
-        input.addEventListener('keydown',(e)=>{
-            if(e.key === 'Enter' && e.shiftKey === false){
+        input.addEventListener('keypress',(e)=>{
+            if(e.shiftKey === false && e.key === 'Enter'){
                 listTag.insertAdjacentHTML('beforeend','<li></li>');
                 input.value = '';
                 insertLineText();
             }
-            if(e.key === 'Enter' && e.shiftKey === true){
-                console.log('ok');
+            if(e.shiftKey === true && e.key === 'Enter'){
+                input.value = '';
+                input.removeEventListener('input',insertLineText,{once:true});
+                input.addEventListener('input',insertText);
             }
         },{once:true});
     }
 }
 
 function insertText(){
-    input.addEventListener('input',()=>{
+    input.addEventListener('input',()=>{//ここに邪魔されている
         if(printArea.childElementCount !== 0){
             if(printArea.lastElementChild.tagName === 'UL' || printArea.lastElementChild.tagName === 'OL'){
                 previewArea.firstElementChild.textContent = '';
