@@ -142,25 +142,16 @@ function insertLineText(){
     const ul = printArea.getElementsByTagName('ul')[printArea.getElementsByTagName('ul').length - 1];
     const ol = printArea.getElementsByTagName('ol')[printArea.getElementsByTagName('ol').length - 1];
     if(ul){
-        ul.lastElementChild.textContent = input.value;
-        input.addEventListener('keydown',(e)=>{
-            if(e.key === 'Enter' && e.shiftKey === false){
-                console.log(printArea.getElementsByTagName('ul').length);
-                ul.insertAdjacentHTML('beforeend','<li></li>');
-                input.value = '';
-                insertLineText();
-            }
-            if(e.key === 'Enter' && e.shiftKey === true){
-                console.log('ok');
-            }
-        },{once:true});
+        createList(ul);
     }
     if(ol){
-        ol.lastElementChild.textContent = input.value;
+        createList(ol);
+    }
+    function createList(listTag){
+        listTag.lastElementChild.textContent = input.value;
         input.addEventListener('keydown',(e)=>{
             if(e.key === 'Enter' && e.shiftKey === false){
-                console.log(printArea.getElementsByTagName('ol').length);
-                ol.insertAdjacentHTML('beforeend','<li></li>');
+                listTag.insertAdjacentHTML('beforeend','<li></li>');
                 input.value = '';
                 insertLineText();
             }
