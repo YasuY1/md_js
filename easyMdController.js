@@ -138,23 +138,37 @@ function insertLines(){
     });
 }
 
-function insertLineText(){//Enter処理
-    listTags.forEach(function(tag){
-        const parent = printArea.getElementsByTagName(tag)[printArea.getElementsByTagName(tag).length - 1];
-        if(parent){
-            parent.lastElementChild.textContent = input.value;
-        }
+function insertLineText(){
+    const ul = printArea.getElementsByTagName('ul')[printArea.getElementsByTagName('ul').length - 1];
+    const ol = printArea.getElementsByTagName('ol')[printArea.getElementsByTagName('ol').length - 1];
+    if(ul){
+        ul.lastElementChild.textContent = input.value;
         input.addEventListener('keydown',(e)=>{
-            if(e.key === 'Enter' && e.shiftKey === false){//can't difined insertAdjacentHTML(ERR)
-                parent.insertAdjacentHTML('beforeend','<li></li>');
+            if(e.key === 'Enter' && e.shiftKey === false){
+                console.log(printArea.getElementsByTagName('ul').length);
+                ul.insertAdjacentHTML('beforeend','<li></li>');
                 input.value = '';
                 insertLineText();
             }
             if(e.key === 'Enter' && e.shiftKey === true){
-                console.log('ok');//だめ
+                console.log('ok');
             }
         },{once:true});
-    });
+    }
+    if(ol){
+        ol.lastElementChild.textContent = input.value;
+        input.addEventListener('keydown',(e)=>{
+            if(e.key === 'Enter' && e.shiftKey === false){
+                console.log(printArea.getElementsByTagName('ol').length);
+                ol.insertAdjacentHTML('beforeend','<li></li>');
+                input.value = '';
+                insertLineText();
+            }
+            if(e.key === 'Enter' && e.shiftKey === true){
+                console.log('ok');
+            }
+        },{once:true});
+    }
 }
 
 function insertText(){
