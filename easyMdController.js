@@ -91,7 +91,7 @@ markdown.addEventListener('click',()=>{
     input.focus();
 });
 
-input.addEventListener('input',insertText,{once:true});
+input.addEventListener('input',insertText);
 input.addEventListener('input',determineStringType);
 input.addEventListener('keydown',keydownEvents);
 // insertText();
@@ -148,32 +148,46 @@ function insertLineText(){
         createList(ol);
     }
     function createList(listTag){
+        input.removeEventListener('input',insertText,{once:true});
         listTag.lastElementChild.textContent = input.value;
         input.addEventListener('keypress',(e)=>{
             if(e.shiftKey === false && e.key === 'Enter'){
                 listTag.insertAdjacentHTML('beforeend','<li></li>');
                 input.value = '';
+                previewArea.textContent = '';
                 insertLineText();
             }
             if(e.shiftKey === true && e.key === 'Enter'){
                 input.value = '';
                 input.removeEventListener('input',insertLineText,{once:true});
-                input.addEventListener('input',insertText);
+                input.addEventListener('input',ejectList);
             }
         },{once:true});
     }
 }
 
-function insertText(){
-    input.addEventListener('input',()=>{//ここに邪魔されている
+function ejectList(){
+    input.addEventListener('input',()=>{//ここに邪魔されている2回目はULOLが存在する
         if(printArea.childElementCount !== 0){
             if(printArea.lastElementChild.tagName === 'UL' || printArea.lastElementChild.tagName === 'OL'){
-                previewArea.firstElementChild.textContent = '';
-                return false;
+                if(printArea.lastElementChild.childElementCount !== 0){
+                    previewArea.firstElementChild.textContent = '';
+                    input.addEventListener('keypress',(e)=>{
+                        if(e.shiftKey === true && e.key === 'Enter'){
+                            input.addEventListener('input',()=>{
+                                console.log('OK');
+                            });
+                        }
+                    },{once:true});
+                    return false;
+                }
             }
         }
-        previewArea.firstElementChild.textContent = input.value;
     });
+}
+
+function insertText(){//ON,OFFスイッチを作らないといけない
+    previewArea.firstElementChild.textContent = input.value;
 }
 
 function keydownEvents(e){//動かすな！
