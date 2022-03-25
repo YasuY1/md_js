@@ -27,7 +27,7 @@ function insertSpan(){
 }
 
 function widthExtender(){
-    span.textContent = input.value;
+    span.textContent = input.value;//一時的にspanからwidthを拾う
     const styleWidth = Math.ceil(span.getBoundingClientRect().width);
     input.style.width = styleWidth + 'px';
     CompletionProcessing();
@@ -46,6 +46,11 @@ function normalEnter(e){
         addInputArea();
     }
     if(e.key === 'Enter' && e.shiftKey){
-        console.log('OK');
+        printArea.lastElementChild.insertAdjacentText('beforeend',input.value);
+        printArea.lastElementChild.insertAdjacentHTML('beforeend','<br>');
+        printArea.lastElementChild.removeChild(input);
+        printArea.lastElementChild.insertAdjacentText('beforeend','');
+        input.value = '';
+        addInputArea();
     }
 }
