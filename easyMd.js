@@ -11,10 +11,14 @@ function tagSellector(){
         md.addEventListener('click',addInputArea,{once:true});
     }
     if(printArea.lastElementChild.tagName !== 'P'){
-        console.log('Pじゃないよ');
+        headingCommands.forEach(function(command,index){
+            if(printArea.lastElementChild.tagName === headingTags[index].toUpperCase() || printArea.lastElementChild.tagName === headingTags[index].toUpperCase()){
+                addInputArea();
+            }
+        });
+        // console.log('Pじゃないよ');
     }
 }
-
 
 //通常処理
 function addInputArea(){
@@ -72,12 +76,16 @@ function normalEnter(e){
     }
 }
 //通常処理END
+
 function tagChanger(){
-    if(input.value === 'h1 ' || input.value === '# '){
-        const h1 = document.createElement('h1');
-        printArea.lastElementChild.replaceWith(h1);
-        input.value = '';
-        tagSellector();
-    }
+    headingCommands.forEach(function(command,index){
+        if(input.value === command[0] || input.value === command[1]){
+            const tag = document.createElement(headingTags[index]);
+            printArea.lastElementChild.replaceWith(tag);
+            input.value = '';
+            tagSellector();
+        }
+    });
+
     insertSpan();
 }
