@@ -16,7 +16,11 @@ function tagSellector(){
                 addInputArea();
             }
         });
-        // console.log('Pじゃないよ');
+        listCommands.forEach(function(command,index){
+            if(printArea.lastElementChild.tagName === listTags[index].toUpperCase() || printArea.lastElementChild.tagName === listTags[index].toUpperCase()){
+                insertList();
+            }
+        });
     }
 }
 
@@ -86,6 +90,18 @@ function tagChanger(){
             tagSellector();
         }
     });
+    listCommands.forEach(function(command,index){
+        if(input.value === command[0] || input.value === command[1]){
+            const tag = document.createElement(listTags[index]);
+            printArea.lastElementChild.replaceWith(tag);
+            input.value = '';
+            tagSellector();
+        }
+    });
 
     insertSpan();
+}
+
+function insertList(){
+    console.log('list入れる準備OK');
 }
