@@ -34,7 +34,18 @@ function widthExtender(){
 }
 
 function CompletionProcessing(){
-    input.addEventListener('keydown',normalEnter);
+    input.addEventListener('input',composingFilter);
+}
+
+function composingFilter(e){
+    if(input.value.match(/[\x01-\x7E]/) && !e.isComposing){
+        input.addEventListener('keydown',normalEnter);
+    }
+    if(input.value.match(/[^\x01-\x7E]/) && e.isComposing){
+        input.addEventListener('compositionend',()=>{
+            input.addEventListener('keypress',normalEnter,{once:true});
+        });
+    }
 }
 
 function normalEnter(e){
