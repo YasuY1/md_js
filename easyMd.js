@@ -4,12 +4,15 @@ const printArea = document.getElementById('printArea');
 const input = document.createElement('input');
 const span = document.createElement('span');
 
+tagSellector();
 
-if(printArea.lastElementChild.tagName === 'P'){
-    md.addEventListener('click',addInputArea,{once:true});
-}
-if(printArea.lastElementChild.tagName !== 'P'){
-    console.log('Pじゃないよ');
+function tagSellector(){
+    if(printArea.lastElementChild.tagName === 'P'){
+        md.addEventListener('click',addInputArea,{once:true});
+    }
+    if(printArea.lastElementChild.tagName !== 'P'){
+        console.log('Pじゃないよ');
+    }
 }
 
 
@@ -21,7 +24,6 @@ function addInputArea(){
     printArea.lastElementChild.insertAdjacentElement('beforeend',input);
     input.focus();
     input.addEventListener('input',tagChanger);//この後でしか分岐できない
-    // input.addEventListener('input',insertSpan);
 }
 
 function insertSpan(){
@@ -75,7 +77,7 @@ function tagChanger(){
         const h1 = document.createElement('h1');
         printArea.lastElementChild.replaceWith(h1);
         input.value = '';
-        addInputArea();
+        tagSellector();
     }
     insertSpan();
 }
