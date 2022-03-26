@@ -4,6 +4,7 @@ const printArea = document.getElementById('printArea');
 const input = document.createElement('input');
 const span = document.createElement('span');
 
+
 if(printArea.lastElementChild.tagName === 'P'){
     md.addEventListener('click',addInputArea,{once:true});
 }
@@ -11,13 +12,16 @@ if(printArea.lastElementChild.tagName !== 'P'){
     console.log('Pじゃないよ');
 }
 
+
+//通常処理
 function addInputArea(){
     input.setAttribute('type','text');
     input.setAttribute('id','input');
     input.style.width = '0px';
     printArea.lastElementChild.insertAdjacentElement('beforeend',input);
     input.focus();
-    input.addEventListener('input',insertSpan);
+    input.addEventListener('input',tagChanger);//この後でしか分岐できない
+    // input.addEventListener('input',insertSpan);
 }
 
 function insertSpan(){
@@ -64,4 +68,14 @@ function normalEnter(e){
         input.value = '';
         addInputArea();
     }
+}
+//通常処理END
+function tagChanger(){
+    if(input.value === 'h1 ' || input.value === '# '){
+        const h1 = document.createElement('h1');
+        printArea.lastElementChild.replaceWith(h1);
+        input.value = '';
+        addInputArea();
+    }
+    insertSpan();
 }
