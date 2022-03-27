@@ -23,3 +23,11 @@ const listCommands = [
     ['ul ','- '],
     ['ol ','+ '],
 ]
+
+const underLineTags = [
+    'hr',
+]
+
+const underLineCommands = [
+    ['hr ','***'],
+]
