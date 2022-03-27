@@ -24,11 +24,16 @@ function tagSellector(){
     }
 }
 
-//通常処理
-function addInputArea(){
+//共通処理
+function inputPropertyResetter(){
     input.setAttribute('type','text');
     input.setAttribute('id','input');
     input.style.width = '0px';
+}
+
+//通常処理
+function addInputArea(){
+    inputPropertyResetter();
     printArea.lastElementChild.insertAdjacentElement('beforeend',input);
     input.focus();
     input.addEventListener('input',tagChanger);//この後でしか分岐できない
@@ -103,5 +108,27 @@ function tagChanger(){
 }
 
 function insertList(){
-    console.log('list入れる準備OK');
+    printArea.lastElementChild.insertAdjacentHTML('beforeend','<li></li>');
+    inuputAreaPutInList();
+}
+
+function inuputAreaPutInList(){
+    inputPropertyResetter();
+    printArea.lastElementChild.lastElementChild.insertAdjacentElement('beforeend',input);
+    input.focus();
+    input.addEventListener('keydown',listEnter);
+}
+
+function listEnter(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+        input.removeEventListener('keydown',normalEnter);
+        printArea.lastElementChild.lastElementChild.innerHTML = input.value;
+        input.value = '';
+        insertList();
+    }
+    if(e.key === 'Enter' && e.shiftKey){
+        printArea.lastElementChild.removeChild(printArea.lastElementChild.lastElementChild);
+        printArea.insertAdjacentHTML('beforeend','<p></p>');
+        addInputArea();
+    }
 }
