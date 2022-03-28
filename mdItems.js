@@ -31,3 +31,11 @@ const underLineTags = [
 const underLineCommands = [
     ['hr ','***'],
 ]
+
+const blockQuoteTags = [
+    'blockquote'
+]
+
+const blockQuoteCommands = [
+    ['bq ','> '],
+]

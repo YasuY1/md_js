@@ -7,9 +7,11 @@ const span = document.createElement('span');
 tagSellector();
 
 function tagSellector(){
+    //Pタグ内
     if(printArea.lastElementChild.tagName === 'P'){
         md.addEventListener('click',addInputArea,{once:true});
     }
+    //Pタグ以外
     if(printArea.lastElementChild.tagName !== 'P'){
         headingCommands.forEach(function(command,index){
             if(printArea.lastElementChild.tagName === headingTags[index].toUpperCase() || printArea.lastElementChild.tagName === headingTags[index].toUpperCase()){
@@ -26,7 +28,12 @@ function tagSellector(){
                 printArea.insertAdjacentHTML('beforeend','<p></p>');
                 addInputArea();
             }
-        });//リストタグ
+        });//下線
+        blockQuoteCommands.forEach(function(command,index){
+            if(printArea.lastElementChild.tagName === blockQuoteTags[index].toUpperCase() || printArea.lastElementChild.tagName === blockQuoteTags[index].toUpperCase()){
+                addInputArea();
+            }
+        });//blockquote
     }
 }
 
@@ -96,50 +103,13 @@ function normalEnter(e){
 //タグチェンジャー
 function tagChanger(){
     //見出しタグ
-    headingCommands.forEach(function(command,index){
-        if(input.value === command[0] || input.value === command[1]){
-            const tag = document.createElement(headingTags[index]);
-            printArea.lastElementChild.replaceWith(tag);
-            input.value = '';
-            tagSellector();
-        }
-        for(let i=0; i<2; i++){
-            if(input.value === '\\' + command[i]){
-                input.value = command[i];
-                tagSellector();
-            }
-        }
-    });
+    createTagElements(headingCommands,headingTags);
     //リストタグ
-    listCommands.forEach(function(command,index){
-        if(input.value === command[0] || input.value === command[1]){
-            const tag = document.createElement(listTags[index]);
-            printArea.lastElementChild.replaceWith(tag);
-            input.value = '';
-            tagSellector();
-        }
-        for(let i=0; i<2; i++){
-            if(input.value === '\\' + command[i]){
-                input.value = command[i];
-                tagSellector();
-            }
-        }
-    });
+    createTagElements(listCommands,listTags);
     //下線
-    underLineCommands.forEach(function(command,index){
-        if(input.value === command[0] || input.value === command[1]){
-            const tag = document.createElement(underLineTags[index]);
-            printArea.lastElementChild.replaceWith(tag);
-            input.value = '';
-            tagSellector();
-        }
-        for(let i=0; i<2; i++){
-            if(input.value === '\\' + command[i]){
-                input.value = command[i];
-                tagSellector();
-            }
-        }
-    });
+    createTagElements(underLineCommands,underLineTags);
+    //blockquote
+    createTagElements(blockQuoteCommands,blockQuoteTags);
 
     insertSpan();
 }
@@ -166,6 +136,24 @@ function listEnter(e){
     if(e.key === 'Enter' && e.shiftKey){
         printArea.lastElementChild.removeChild(printArea.lastElementChild.lastElementChild);
         printArea.insertAdjacentHTML('beforeend','<p></p>');
+        input.removeEventListener('keydown',listEnter);
         addInputArea();
     }
+}
+
+function createTagElements(commands,tags){//タグチェンジャーの関数
+    commands.forEach(function(command,index){
+        if(input.value === command[0] || input.value === command[1]){
+            const tag = document.createElement(tags[index]);
+            printArea.lastElementChild.replaceWith(tag);
+            input.value = '';
+            tagSellector();
+        }
+        for(let i=0; i<2; i++){
+            if(input.value === '\\' + command[i]){
+                input.value = command[i];
+                tagSellector();
+            }
+        }
+    });
 }
