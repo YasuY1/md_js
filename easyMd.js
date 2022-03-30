@@ -111,6 +111,16 @@ function tagChanger(){
     //blockquote
     createTagElements(blockQuoteCommands,blockQuoteTags);
 
+    inlineCommands.forEach(function(item,index){
+        if(printArea.lastElementChild.tagName === 'P' && input.value.match(item[0])){
+            const parentElement = printArea.lastElementChild;
+            parentElement.innerHTML = input.value.replace(item[1],'<'+inlineCodes[index]+'>');
+            input.value='';
+            parentElement.insertAdjacentElement('beforeend',input);
+            input.focus();
+            parentElement.lastElementChild.previousElementSibling.textContent = parentElement.lastElementChild.previousElementSibling.textContent.replace(item[1],'');
+        }
+    });
     insertSpan();
 }
 
