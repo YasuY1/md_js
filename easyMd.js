@@ -110,17 +110,20 @@ function tagChanger(){
     createTagElements(underLineCommands,underLineTags);
     //blockquote
     createTagElements(blockQuoteCommands,blockQuoteTags);
-
-    inlineCommands.forEach(function(item,index){
-        if(printArea.lastElementChild.tagName === 'P' && input.value.match(item[0])){
-            const parentElement = printArea.lastElementChild;
-            parentElement.innerHTML = input.value.replace(item[1],'<'+inlineCodes[index]+'>');
-            input.value='';
-            parentElement.insertAdjacentElement('beforeend',input);
-            input.focus();
-            parentElement.lastElementChild.previousElementSibling.textContent = parentElement.lastElementChild.previousElementSibling.textContent.replace(item[1],'');
+    //インラインコマンド
+    inlineTagElements(inlineCommands,inlineCodes);
+    //アスタリスク処理
+    if(input.value.match(/.*(\*{1})/)){
+        const i = input.value;
+        const after = i.substr(i.indexOf('*') + 1);
+        if(after.slice(0,1) === '*'){
+            inlineTagElements(commandDouble,codeDouble);
         }
-    });
+        if(after.slice(0,1) !== '*'){
+            inlineTagElements(commandSingle,codeSingle);
+        }
+    }
+
     insertSpan();
 }
 
@@ -164,6 +167,19 @@ function createTagElements(commands,tags){//タグチェンジャーの関数
                 input.value = command[i];
                 tagSellector();
             }
+        }
+    });
+}
+
+function inlineTagElements(commands,codes){
+    commands.forEach(function(item,index){
+        if(printArea.lastElementChild.tagName === 'P' && input.value.match(item[0])){
+            const parentElement = printArea.lastElementChild;
+            parentElement.innerHTML = input.value.replace(item[1],'<'+codes[index]+'>');
+            input.value='';
+            parentElement.insertAdjacentElement('beforeend',input);
+            input.focus();
+            parentElement.lastElementChild.previousElementSibling.textContent = parentElement.lastElementChild.previousElementSibling.textContent.replace(item[1],null);
         }
     });
 }

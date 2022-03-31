@@ -42,14 +42,27 @@ const blockQuoteCommands = [
 
 const inlineCodes = [
     'code',
-    'strong',
     'del',
-    'em'
 ]
 
 const inlineCommands = [
-    [/.*(\`).*(\`)/, '`'],
-    [/.*(\*\*).*(\*\*)/, '**'],
-    [/.*(\~\~).*(\~\~)/, '~'],
-    [/.*(\*).*(\*)/, '*'],
+    [/.*(\`).+(\`)/, '`'],
+    [/.*(\~{2}).+(\~{2})/, '~~'],
 ]
+
+const codeDouble = [
+    'strong',
+]
+
+const commandDouble = [
+    [/.*(\*{2}).+(\*{2})/, '**'],
+]
+
+const codeSingle = [
+    'em'
+]
+
+const commandSingle = [
+    [/.*(\*{1}).+(\*{1})/, '*'],
+]
+
