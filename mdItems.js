@@ -39,30 +39,3 @@ const blockQuoteTags = [
 const blockQuoteCommands = [
     ['bq ','> '],
 ]
-
-const inlineCodes = [
-    'code',
-    'del',
-]
-
-const inlineCommands = [
-    [/.*(\`).+(\`)/, '`'],
-    [/.*(\~{2}).+(\~{2})/, '~~'],
-]
-
-const codeDouble = [
-    'strong',
-]
-
-const commandDouble = [
-    [/.*(\*{2}).+(\*{2})/, '**'],
-]
-
-const codeSingle = [
-    'em'
-]
-
-const commandSingle = [
-    [/.*(\*{1}).+(\*{1})/, '*'],
-]
-
