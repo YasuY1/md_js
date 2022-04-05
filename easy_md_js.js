@@ -3,8 +3,9 @@ const printArea = document.getElementById('printArea');
 const input = document.createElement('input');
 const span = document.createElement('span');
 
+let i = 0;
+
 const printElement0 = printArea.firstElementChild;
-const printElementFin = printArea.lastElementChild;
 const elem0Fsize = window.getComputedStyle(printElement0).getPropertyValue('font-size');
 const elem0Fweight = window.getComputedStyle(printElement0).getPropertyValue('font-weight');
 
@@ -30,6 +31,15 @@ function searchText(){
 }
 
 function widthExtender(){
+    i++;
+    if(i>3){
+        i = 2;
+    }
+    if(i>1){
+        const parent = document.getElementById('this');
+        const fSize = window.getComputedStyle(parent).getPropertyValue('font-size');
+        span.style.fontSize = fSize;
+    }
     span.textContent = input.value;
     const spanWidth = span.getBoundingClientRect().width;
     input.style.width = spanWidth + 'px';
@@ -38,7 +48,16 @@ function widthExtender(){
 function tagChanger(){
     this.parentNode.setAttribute('id','this');
     if(input.value === 'h1 '){
-        console.log('h1');
+        i = 0;
+        const h1 = document.createElement('h1');
+        this.parentNode.replaceWith(h1);
+        h1.textContent = '';
+        h1.insertAdjacentElement('beforeend',input);
+        input.style.width = '6px';
+        input.style.fontSize = window.getComputedStyle(this.parentElement).getPropertyValue('font-size');
+        input.style.fontWeight = window.getComputedStyle(this.parentElement).getPropertyValue('font-weight');
+        input.value = '';
+        input.focus();
     }
     //インラインコマンド
     if(this.parentElement.tagName === 'P'){
@@ -81,6 +100,8 @@ function pressEnter(e){
         input.replaceWith(input.value);
         document.getElementById('this').insertAdjacentElement('beforeend',input);
         input.style.width = '6px';
+        input.style.fontSize = window.getComputedStyle(this.parentElement).getPropertyValue('font-size');
+        input.style.fontWeight = window.getComputedStyle(this.parentElement).getPropertyValue('font-weight');
         input.value = '';
         input.focus();
     }
