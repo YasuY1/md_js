@@ -55,6 +55,7 @@ function addInputArea(){
 function insertSpan(){
     md.appendChild(span);
     span.style.opacity = '0';
+    span.setAttribute('id','trashBox');
     input.addEventListener('input',widthExtender);
 }
 
@@ -183,3 +184,16 @@ function inlineTagElements(commands,codes){
         }
     });
 }
+
+//クリック動作
+printArea.addEventListener('click',(e)=>{
+    const coodinate = document.elementFromPoint(e.pageX,e.pageY);
+    if(coodinate.tagName !== 'INPUT'){
+    }
+});
+//BS動作
+input.addEventListener('keydown',(e)=>{
+    if(e.key === 'Backspace'){
+        console.log('OK');
+    }
+});
