@@ -145,9 +145,28 @@ function createListTag(commands,tags,elem){
 
 function listEnter(e){
     if(e.key === 'Enter' && !e.shiftKey){
-        console.log('Enter');
+        this.parentElement.parentElement.insertAdjacentHTML('beforeend','<li>');
+        this.parentElement.removeAttribute('id','this');
+        this.parentElement.parentElement.lastElementChild.setAttribute('id','this');
+        input.replaceWith(input.value);
+        document.getElementById('this').insertAdjacentElement('beforeend',input);
+        input.value = '';
+        input.focus();
     }
     if(e.key === 'Enter' && e.shiftKey){
-        console.log('shift');
+        if(input.value === ''){
+            return false;
+        }
+        if(input.value !== ''){
+            this.parentElement.removeAttribute('id','this');
+            input.replaceWith(input.value);
+            printArea.insertAdjacentHTML('beforeend','<p>');
+            printArea.lastElementChild.textContent = '';
+            printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+            input.value = '';
+            input.focus();
+            input.style.width = '6px';
+            input.removeEventListener('keydown',listEnter);
+        }
     }
 }
