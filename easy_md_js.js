@@ -51,6 +51,7 @@ function tagChanger(){
     createHeadingTag(headingCommands,headingTags,this);
     //リストタグ
     createListTag(listCommands,listTags,this);
+
     //インラインコマンド
     if(this.parentElement.tagName === 'P'){
         if(!input.value.match(/.*(\*{3})/) && !input.value.match(/.*(\*{2})/)){
@@ -166,6 +167,7 @@ function listEnter(e){
             input.value = '';
             input.focus();
             input.style.width = '6px';
+            i = 0;
             input.removeEventListener('keydown',listEnter);
         }
     }
