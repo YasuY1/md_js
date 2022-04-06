@@ -47,18 +47,10 @@ function widthExtender(){
 
 function tagChanger(){
     this.parentNode.setAttribute('id','this');
-    if(input.value === 'h1 '){
-        i = 0;
-        const h1 = document.createElement('h1');
-        this.parentNode.replaceWith(h1);
-        h1.textContent = '';
-        h1.insertAdjacentElement('beforeend',input);
-        input.style.width = '6px';
-        input.style.fontSize = window.getComputedStyle(this.parentElement).getPropertyValue('font-size');
-        input.style.fontWeight = window.getComputedStyle(this.parentElement).getPropertyValue('font-weight');
-        input.value = '';
-        input.focus();
-    }
+    //見出しタグ
+    createHeadingTag(headingCommands,headingTags,this);
+    //リストタグ
+    createListTag(listCommands,listTags,this);
     //インラインコマンド
     if(this.parentElement.tagName === 'P'){
         if(!input.value.match(/.*(\*{3})/) && !input.value.match(/.*(\*{2})/)){
@@ -116,4 +108,46 @@ function pressEnter(e){
 
 }
 
+function createHeadingTag(commands,tags,elem){
+    commands.forEach(function(command,index){
+        if(input.value === command[0] || input.value === command[1]){
+            i = 0;
+            const tag = document.createElement(tags[index]);
+            elem.parentNode.replaceWith(tag);
+            tag.textContent = '';
+            tag.insertAdjacentElement('beforeend',input);
+            input.style.width = '6px';
+            input.style.fontSize = window.getComputedStyle(elem.parentElement).getPropertyValue('font-size');
+            input.style.fontWeight = window.getComputedStyle(elem.parentElement).getPropertyValue('font-weight');
+            input.value = '';
+            input.focus();
+        }
+    });
+}
 
+function createListTag(commands,tags,elem){
+    commands.forEach(function(command,index){
+        if(input.value === command[0] || input.value === command[1]){
+            i = 0;
+            const tag = document.createElement(tags[index]);
+            elem.parentNode.replaceWith(tag);
+            tag.innerHTML = '<li>';
+            tag.lastElementChild.textContent = '';
+            tag.lastElementChild.setAttribute('id','this');
+            tag.lastElementChild.insertAdjacentElement('beforeend',input);
+            input.value = '';
+            input.focus();
+            input.removeEventListener('keydown',pressEnter);
+            input.addEventListener('keydown',listEnter);
+        }
+    });
+}
+
+function listEnter(e){
+    if(e.key === 'Enter' && !e.shiftKey){
+        console.log('Enter');
+    }
+    if(e.key === 'Enter' && e.shiftKey){
+        console.log('shift');
+    }
+}
