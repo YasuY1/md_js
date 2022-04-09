@@ -25,25 +25,31 @@ function searchText(e){
         markdown.appendChild(span);
         input.addEventListener('input',tagChanger);
     }
-    if(printArea.childElementCount >= 1){
+    if(printArea.childElementCount > 1){
         const coodinateX = document.elementFromPoint(e.pageX,e.pageY);//取得要素(座標X,座標Y)
         const thisFSize = window.getComputedStyle(coodinateX).getPropertyValue('font-size').replace('px','');
         const thisLineHeight = thisFSize * 1.2;//line-heightがnormalの時のみ
         const thisWidth = coodinateX.getBoundingClientRect().width;
         const thisHeight = coodinateX.getBoundingClientRect().height;
-        const strCount = Math.ceil(e.pageX / thisFSize);
+        let strCount;
+        if(coodinateX.textContent.match(/[\x01-\x7E]/)){
+            strCount = Math.floor(e.pageX / (thisFSize/2));
+        };
+        if(coodinateX.textContent.match(/[^\x01-\x7E]/)){
+            strCount = Math.floor(e.pageX / thisFSize);
+        };
 
-        console.log('要素：' + coodinateX.tagName);
-        console.log('座標X：' + e.pageX);
-        console.log('座標Y：' + e.pageY);
-        console.log('フォントサイズ：' + thisFSize);
-        console.log('座標までの文字数：' + strCount);//sbとmbに分けないとsbで座標が半分になる
-        console.log('文字の高さ：' + thisHeight);
-        console.log('要素のline-height：' + thisLineHeight);
-        console.log('行数：' + Math.floor(thisHeight / thisLineHeight));
-        console.log('最大横文字数：' + Math.floor(thisWidth / thisFSize));
+        if(coodinateX.innerHTML.match(/.*(\<input).*/)){
+            coodinateX.removeChild(input);
+        }
+        console.log(coodinateX.innerHTML);
 
+        const beforeText = coodinateX.innerHTML.slice(0, strCount);
+        const afterText = coodinateX.innerHTML.slice(strCount,coodinateX.textContent.length);
 
+        coodinateX.innerHTML = beforeText;
+        coodinateX.insertAdjacentElement('beforeend',input);
+        coodinateX.insertAdjacentText('beforeend',afterText);
     }
     //<-テキストが入っている場合の処理を挿入
 }
