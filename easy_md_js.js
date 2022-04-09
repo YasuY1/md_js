@@ -9,25 +9,43 @@ const printElement0 = printArea.firstElementChild;
 const elem0Fsize = window.getComputedStyle(printElement0).getPropertyValue('font-size');
 const elem0Fweight = window.getComputedStyle(printElement0).getPropertyValue('font-weight');
 
-//メインコントロール
+//(メインコントロール--------------------------------------
 markdown.addEventListener('click',searchText);
 input.addEventListener('input',widthExtender);//常時起動
-//
+//-----------------------------------------------------
 
-function searchText(){
+function searchText(e){
     if(printArea.childElementCount === 1 && printElement0.textContent === ''){
         printElement0.insertAdjacentElement('beforeend',input);
         input.style.width = '6px';
-        input.style.fontSize = elem0Fsize;
-        input.style.fontWeight = elem0Fweight;
         input.focus();
+        input.style.fontSize = window.getComputedStyle(printElement0).getPropertyValue('font-size');
+        input.style.fontWeight = window.getComputedStyle(printElement0).getPropertyValue('font-weight');
         span.style.opacity = '0';
         markdown.appendChild(span);
         input.addEventListener('input',tagChanger);
     }
-    if(printArea.childElementCount >= 1 && printElement0.textContent !== ''){
-        console.log('何かあるよ！');
-    }//<-テキストが入っている場合の処理を挿入
+    if(printArea.childElementCount >= 1){
+        const coodinateX = document.elementFromPoint(e.pageX,e.pageY);//取得要素(座標X,座標Y)
+        const thisFSize = window.getComputedStyle(coodinateX).getPropertyValue('font-size').replace('px','');
+        const thisLineHeight = thisFSize * 1.2;//line-heightがnormalの時のみ
+        const thisWidth = coodinateX.getBoundingClientRect().width;
+        const thisHeight = coodinateX.getBoundingClientRect().height;
+        const strCount = Math.ceil(e.pageX / thisFSize);
+
+        console.log('要素：' + coodinateX.tagName);
+        console.log('座標X：' + e.pageX);
+        console.log('座標Y：' + e.pageY);
+        console.log('フォントサイズ：' + thisFSize);
+        console.log('座標までの文字数：' + strCount);//sbとmbに分けないとsbで座標が半分になる
+        console.log('文字の高さ：' + thisHeight);
+        console.log('要素のline-height：' + thisLineHeight);
+        console.log('行数：' + Math.floor(thisHeight / thisLineHeight));
+        console.log('最大横文字数：' + Math.floor(thisWidth / thisFSize));
+
+
+    }
+    //<-テキストが入っている場合の処理を挿入
 }
 
 function widthExtender(){
@@ -47,27 +65,25 @@ function widthExtender(){
 
 function tagChanger(){
     this.parentNode.setAttribute('id','this');
-    //見出しタグ
+    //インラインコマンド
+    if(!input.value.match(/.*(\*{3})/) && !input.value.match(/.*(\*{2})/)){
+        createInline(/.*(\*{1}).+(\*{1})/,/(\*{1})/,'<em>',this);
+    }
+    if(!input.value.match(/.*(\*{3})/)){
+        createInline(/.*(\*{2}).+(\*{2})/,/(\*{2})/,'<strong>',this);
+    }
+    if(input.value.match(/.*(\~{2}).+(\~{2})/)){
+        createInline(/.*(\~{2}).+(\~{2})/,/(\~{2})/,'<del>',this);
+    }
+    if(input.value.match(/.*(\`).+(\`)/)){
+        createInline(/.*(\`).+(\`)/,/(\`)/,'<code>',this);
+    }
+    //見出しタグチェンジ
     createHeadingTag(headingCommands,headingTags,this);
-    //リストタグ
+    //リストタグチェンジ
     createListTag(listCommands,listTags,this);
 
-    //インラインコマンド
-    if(this.parentElement.tagName === 'P'){
-        if(!input.value.match(/.*(\*{3})/) && !input.value.match(/.*(\*{2})/)){
-            createInline(/.*(\*{1}).+(\*{1})/,/(\*{1})/,'<em>',this);
-        }
-        if(!input.value.match(/.*(\*{3})/)){
-            createInline(/.*(\*{2}).+(\*{2})/,/(\*{2})/,'<strong>',this);
-        }
-        if(input.value.match(/.*(\~{2}).+(\~{2})/)){
-            createInline(/.*(\~{2}).+(\~{2})/,/(\~{2})/,'<del>',this);
-        }
-        if(input.value.match(/.*(\`).+(\`)/)){
-            createInline(/.*(\`).+(\`)/,/(\`)/,'<code>',this);
-        }
-        input.addEventListener('keydown',pressEnter);
-    }
+    input.addEventListener('keydown',pressEnter);
 }
 
 function createInline(matchStr,replaceStr,code,element){
@@ -85,7 +101,46 @@ function createInline(matchStr,replaceStr,code,element){
 }
 
 function pressEnter(e){
-    if(e.key === 'Enter' && !e.shiftKey){
+    if(e.isComposing){
+        return false;
+    }
+    if(this.parentElement.tagName === 'P'){
+        if(input.value === ''){
+            if(e.key === 'Enter' && !e.shiftKey && this.parentNode.tagName !== 'LI'){
+                printArea.insertAdjacentHTML('beforeend','<p>');
+                this.parentNode.removeAttribute('id','this');
+                this.parentNode.nextElementSibling.textContent = '';
+                this.parentNode.nextElementSibling.setAttribute('id','this');
+                input.replaceWith(input.value);
+                document.getElementById('this').insertAdjacentElement('beforeend',input);
+                input.style.width = '6px';
+                input.style.fontSize = window.getComputedStyle(this.parentElement).getPropertyValue('font-size');
+                input.style.fontWeight = window.getComputedStyle(this.parentElement).getPropertyValue('font-weight');
+                input.value = '';
+                input.focus();
+            }
+            if(e.key === 'Enter' && e.shiftKey && this.parentNode.previousElementSibling.tagName !== 'UL' && this.parentNode.previousElementSibling.tagName !== 'OL'){
+                input.replaceWith(input.value);
+                document.getElementById('this').insertAdjacentHTML('beforeend','<br>');
+                document.getElementById('this').insertAdjacentElement('beforeend',input);
+                input.style.width = '6px';
+                input.value = '';
+                input.focus();
+            }
+        }
+        if(input.value !== ''){
+            if(e.key === 'Enter' && !e.shiftKey && this.parentNode.tagName !== 'LI'){
+                input.replaceWith(input.value);
+                document.getElementById('this').insertAdjacentElement('beforeend',input);
+                input.style.width = '6px';
+                input.style.fontSize = window.getComputedStyle(this.parentElement).getPropertyValue('font-size');
+                input.style.fontWeight = window.getComputedStyle(this.parentElement).getPropertyValue('font-weight');
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+    if(this.parentElement.tagName !== 'P' && e.key === 'Enter' && !e.shiftKey && this.parentNode.tagName !== 'LI'){
         printArea.insertAdjacentHTML('beforeend','<p>');
         this.parentNode.removeAttribute('id','this');
         this.parentNode.nextElementSibling.textContent = '';
@@ -98,18 +153,17 @@ function pressEnter(e){
         input.value = '';
         input.focus();
     }
-    if(e.key === 'Enter' && e.shiftKey){
-        input.replaceWith(input.value);
-        document.getElementById('this').insertAdjacentHTML('beforeend','<br>');
-        document.getElementById('this').insertAdjacentElement('beforeend',input);
-        input.style.width = '6px';
-        input.value = '';
-        input.focus();
-    }
-
+    // if(this.parentNode.tagName === 'P' && e.key === 'Enter' && e.shiftKey && this.parentNode.previousElementSibling.tagName !== 'UL' && this.parentNode.previousElementSibling.tagName !== 'OL'){
+    //     input.replaceWith(input.value);
+    //     document.getElementById('this').insertAdjacentHTML('beforeend','<br>');
+    //     document.getElementById('this').insertAdjacentElement('beforeend',input);
+    //     input.style.width = '6px';
+    //     input.value = '';
+    //     input.focus();
+    // }
 }
 
-function createHeadingTag(commands,tags,elem){
+function createHeadingTag(commands,tags,elem){//----------------------------------------
     commands.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
             i = 0;
@@ -124,7 +178,7 @@ function createHeadingTag(commands,tags,elem){
             input.focus();
         }
     });
-}
+}//------------------------------------------------------
 
 function createListTag(commands,tags,elem){
     commands.forEach(function(command,index){
@@ -145,6 +199,9 @@ function createListTag(commands,tags,elem){
 }
 
 function listEnter(e){
+    if(e.isComposing){
+        return false;
+    }
     if(e.key === 'Enter' && !e.shiftKey){
         this.parentElement.parentElement.insertAdjacentHTML('beforeend','<li>');
         this.parentElement.removeAttribute('id','this');
@@ -162,8 +219,8 @@ function listEnter(e){
             this.parentElement.removeAttribute('id','this');
             input.replaceWith(input.value);
             printArea.insertAdjacentHTML('beforeend','<p>');
-            printArea.lastElementChild.textContent = '';
             printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+            printArea.lastElementChild.setAttribute('id','this');
             input.value = '';
             input.focus();
             input.style.width = '6px';
