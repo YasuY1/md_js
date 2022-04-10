@@ -28,21 +28,32 @@ function searchText(e){
     if(printArea.childElementCount > 1){
         const coodinateX = document.elementFromPoint(e.pageX,e.pageY);//取得要素(座標X,座標Y)
         const thisFSize = window.getComputedStyle(coodinateX).getPropertyValue('font-size').replace('px','');
-        const thisLineHeight = thisFSize * 1.2;//line-heightがnormalの時のみ
+        const thisLineHeight = thisFSize * 1.4;//line-heightがnormalの時のみ
         const thisWidth = coodinateX.getBoundingClientRect().width;
         const thisHeight = coodinateX.getBoundingClientRect().height;
+        const thisY = coodinateX.getBoundingClientRect().y;
+
         let strCount;
         if(coodinateX.textContent.match(/[\x01-\x7E]/)){
             strCount = Math.floor(e.pageX / (thisFSize/2));
         };
         if(coodinateX.textContent.match(/[^\x01-\x7E]/)){
-            strCount = Math.floor(e.pageX / thisFSize);
+            strCount = Math.floor(e.pageX / thisFSize * 1.4);
         };
+
+        let maxLength = Math.floor(thisWidth / (thisFSize));
+
+        if(thisHeight/thisLineHeight > 1){
+            const lineCountAll = Math.floor(thisHeight/thisLineHeight);
+            const lineCountThis = Math.floor((e.pageY - thisY)/thisLineHeight);
+            if(!coodinateX.innerHTML.match(/.*(\<br).*/)){
+                strCount = strCount + (lineCountThis * maxLength);
+            }
+        }
 
         if(coodinateX.innerHTML.match(/.*(\<input).*/)){
             coodinateX.removeChild(input);
         }
-        console.log(coodinateX.innerHTML);
 
         const beforeText = coodinateX.innerHTML.slice(0, strCount);
         const afterText = coodinateX.innerHTML.slice(strCount,coodinateX.textContent.length);
@@ -50,6 +61,8 @@ function searchText(e){
         coodinateX.innerHTML = beforeText;
         coodinateX.insertAdjacentElement('beforeend',input);
         coodinateX.insertAdjacentText('beforeend',afterText);
+
+        input.focus();
     }
     //<-テキストが入っている場合の処理を挿入
 }
