@@ -38,16 +38,47 @@ function searchText(e){
             strCount = Math.floor(e.pageX / (thisFSize/2));
         };
         if(coodinateX.textContent.match(/[^\x01-\x7E]/)){
-            strCount = Math.floor(e.pageX / thisFSize * 1.4);
+            strCount = Math.floor(e.pageX / thisFSize);
         };
 
-        let maxLength = Math.floor(thisWidth / (thisFSize));
+        let maxLength = Math.floor(thisWidth / thisFSize);
 
         if(thisHeight/thisLineHeight > 1){
-            const lineCountAll = Math.floor(thisHeight/thisLineHeight);
             const lineCountThis = Math.floor((e.pageY - thisY)/thisLineHeight);
             if(!coodinateX.innerHTML.match(/.*(\<br).*/)){
                 strCount = strCount + (lineCountThis * maxLength);
+            }
+            if(coodinateX.innerHTML.match(/.*(\<input).*/)){
+                coodinateX.removeChild(input);
+            }
+            if(coodinateX.innerHTML.match(/.*(\<br).*/)){
+                const textBlock = coodinateX.innerHTML.split('<br>');
+                if(lineCountThis === 0){
+                    coodinateX.textContent = textBlock[0].slice(0,strCount);
+                    coodinateX.insertAdjacentElement('beforeend',input);
+                    coodinateX.insertAdjacentText('beforeend',textBlock[0].slice(strCount,textBlock[0].length));
+                    for(let i=1; i<textBlock.length; i++){
+                        coodinateX.insertAdjacentHTML('beforeend','<br>');
+                        coodinateX.insertAdjacentText('beforeend',textBlock[i]);
+                    }
+                }
+                for(let n=1; n<Math.floor(thisHeight/thisLineHeight); n++){
+                    if(lineCountThis === n){
+                        coodinateX.innerHTML = '';
+                        for(let i=0; i<lineCountThis; i++){
+                            coodinateX.insertAdjacentHTML('beforeend',textBlock[i]);
+                            coodinateX.insertAdjacentHTML('beforeend','<br>');
+                        }
+                        coodinateX.insertAdjacentText('beforeend',textBlock[lineCountThis].slice(0,strCount));
+                        coodinateX.insertAdjacentElement('beforeend',input);
+                        coodinateX.insertAdjacentText('beforeend',textBlock[lineCountThis].slice(strCount,textBlock[lineCountThis].length));
+                        for(let i=lineCountThis + 1; i<textBlock.length; i++){
+                            coodinateX.insertAdjacentHTML('beforeend','<br>');
+                            coodinateX.insertAdjacentText('beforeend',textBlock[i]);
+                        }
+                    }
+                }
+                return false;
             }
         }
 
