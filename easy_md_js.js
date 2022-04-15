@@ -4,6 +4,10 @@ const input = document.createElement('input');
 const span = document.createElement('span');
 
 let i = 0;
+let c = 0;
+
+let beforeText;
+let afterText;
 
 const printElement0 = printArea.firstElementChild;
 const elem0Fsize = window.getComputedStyle(printElement0).getPropertyValue('font-size');
@@ -11,6 +15,7 @@ const elem0Fweight = window.getComputedStyle(printElement0).getPropertyValue('fo
 
 //(メインコントロール--------------------------------------
 markdown.addEventListener('click',searchText);
+input.addEventListener('keydown',arrows);
 input.addEventListener('input',widthExtender);//常時起動
 //-----------------------------------------------------
 
@@ -26,9 +31,9 @@ function searchText(e){
         input.addEventListener('input',tagChanger);
     }
     if(printArea.childElementCount > 1){
-        const coodinateX = document.elementFromPoint(e.pageX,e.pageY);//取得要素(座標X,座標Y)
+        const coodinateX = document.elementFromPoint(e.pageX,e.pageY);
         const thisFSize = window.getComputedStyle(coodinateX).getPropertyValue('font-size').replace('px','');
-        const thisLineHeight = thisFSize * 1.4;//line-heightがnormalの時のみ
+        const thisLineHeight = thisFSize * 1.4;
         const thisWidth = coodinateX.getBoundingClientRect().width;
         const thisHeight = coodinateX.getBoundingClientRect().height;
         const thisY = coodinateX.getBoundingClientRect().y;
@@ -92,10 +97,11 @@ function searchText(e){
         coodinateX.innerHTML = beforeText;
         coodinateX.insertAdjacentElement('beforeend',input);
         coodinateX.insertAdjacentText('beforeend',afterText);
+        document.getElementById('this').removeAttribute('id','this');
+        coodinateX.setAttribute('id','this');
 
         input.focus();
     }
-    //<-テキストが入っている場合の処理を挿入
 }
 
 function widthExtender(){
@@ -278,4 +284,83 @@ function listEnter(e){
             input.removeEventListener('keydown',listEnter);
         }
     }
+}
+
+function arrows(e){
+    if(printArea.childElementCount > 1 && input.value === ''){
+        if(this.previousSibling){
+            beforeText = this.previousSibling.textContent;//
+        }
+        if(this.nextSibling){
+            afterText = this.nextSibling.textContent;
+        }
+        switch(e.key){
+            case 'ArrowUp':
+                console.log('上');
+                break;
+            case 'ArrowDown':
+                console.log('下');
+                break;
+            case 'ArrowLeft':
+                if(!this.previousSibling){
+                    c++;
+                    if(c === 1){
+                        this.parentElement.previousSibling.setAttribute('id','this');
+                        this.parentElement.removeAttribute('id','this');
+                        document.getElementById('this').insertAdjacentElement('beforeend',input);
+                        beforeText = this.previousSibling.wholeText;
+                        afterText = '';
+                        input.focus();
+                    }
+                    if(c === 3){
+                        c = 0;
+                    }
+                }
+                if(this.previousSibling){
+                    const beforeCount = beforeText.length;
+                    let afterCount;
+                    if(!this.nextSibling){
+                        afterText = (beforeText.slice(beforeCount-1,beforeCount)+afterText).replace('undefined','');
+                    }
+                    if(this.nextSibling){
+                        afterCount = afterText.length;
+                        afterText = beforeText.slice(beforeCount-1,beforeCount)+afterText;
+                    }
+                    beforeText = beforeText.slice(0,-1);
+
+                    document.getElementById('this').innerHTML = beforeText;
+                    document.getElementById('this').insertAdjacentElement('beforeend',input);
+                    document.getElementById('this').insertAdjacentText('beforeend',afterText);
+                }
+                break;
+            case 'ArrowRight':
+                if(this.nextSibling){
+                    const afterCount = afterText.length;
+                    let beforeCount;
+                    if(!this.previousSibling){
+                        beforeText = (beforeText + afterText.slice(0,1)).replace('undefined','');
+                    }
+                    if(this.previousSibling){
+                        beforeCount = beforeText.length;
+                        beforeText = beforeText + afterText.slice(0,1);
+                    }
+
+                    afterText = afterText.slice(1,afterCount);
+
+                    document.getElementById('this').textContent = beforeText;
+                    document.getElementById('this').insertAdjacentElement('beforeend',input);
+                    document.getElementById('this').insertAdjacentText('beforeend',afterText);
+                }
+                if(this.nextSibling.textContent === '' && this.parentElement.nextElementSibling){
+                    beforeText = '';
+                    this.parentElement.nextElementSibling.setAttribute('id','this');
+                    this.parentElement.removeAttribute('id','this');
+                    document.getElementById('this').insertAdjacentElement('afterbegin',input);
+                }
+                break;
+        }
+    }
+    input.focus();
+    console.log('前：' + beforeText);
+    console.log('後：' + afterText);
 }
