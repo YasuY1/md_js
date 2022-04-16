@@ -18,7 +18,7 @@ const elem0Fweight = window.getComputedStyle(printElement0).getPropertyValue('fo
 printArea.onmousedown = ()=>{
     markdown.removeEventListener('click',searchText);
     printArea.onmouseup = ()=>{
-        markdown.addEventListener('click',searchText);
+        markdown.addEventListener('mousedown',searchText);
     };
 };
 markdown.addEventListener('click',searchText);
@@ -307,34 +307,48 @@ function keydownEvents(e){
                 break;
             case 'ArrowLeft':
                 if(!this.previousSibling){
-                    c++;
-                    if(c === 1){
-                        this.parentElement.previousSibling.setAttribute('id','this');
-                        this.parentElement.removeAttribute('id','this');
-                        document.getElementById('this').insertAdjacentElement('beforeend',input);
-                        beforeText = this.previousSibling.wholeText;
-                        afterText = '';
-                    }
-                    if(c === 3){
-                        c = 0;
-                    }
+                    console.log('ない');
                 }
                 if(this.previousSibling){
-                    const beforeCount = beforeText.length;
-                    let afterCount;
-                    if(!this.nextSibling){
-                        afterText = (beforeText.slice(beforeCount-1,beforeCount)+afterText).replace('undefined','');
-                    }
-                    if(this.nextSibling){
-                        afterCount = afterText.length;
-                        afterText = beforeText.slice(beforeCount-1,beforeCount)+afterText;
-                    }
-                    beforeText = beforeText.slice(0,-1);
-
-                    document.getElementById('this').innerHTML = beforeText;
+                    document.getElementById('this').textContent = beforeText.slice(0,-1);
+                    afterText = beforeText.slice(-1,beforeText.length);
                     document.getElementById('this').insertAdjacentElement('beforeend',input);
                     document.getElementById('this').insertAdjacentText('beforeend',afterText);
                 }
+                // if(!this.previousSibling && this.parentElement.previousElementSibling.getElementsByTagName('br')){
+                //     const innerTextArray = this.parentElement.previousElementSibling.innerHTML.split('<br>');
+                //     this.parentElement.previousSibling.setAttribute('id','this');
+                //     this.parentElement.removeAttribute('id','this');
+                // }
+                // if(!this.previousSibling){
+                //     c++;
+                //     if(c === 1){
+                //         this.parentElement.previousSibling.setAttribute('id','this');
+                //         this.parentElement.removeAttribute('id','this');
+                //         document.getElementById('this').insertAdjacentElement('beforeend',input);
+                //         beforeText = this.previousSibling.wholeText;
+                //         afterText = '';
+                //     }
+                //     if(c === 2){
+                //         c = 0;
+                //     }
+                // }
+                // if(this.previousSibling){
+                //     const beforeCount = beforeText.length;
+                //     let afterCount;
+                //     if(!this.nextSibling){
+                //         afterText = (beforeText.slice(beforeCount-1,beforeCount)+afterText).replace('undefined','');
+                //     }
+                //     if(this.nextSibling){
+                //         afterCount = afterText.length;
+                //         afterText = beforeText.slice(beforeCount-1,beforeCount)+afterText;
+                //     }
+                //     beforeText = beforeText.slice(0,-1);
+
+                //     document.getElementById('this').innerHTML = beforeText;
+                //     document.getElementById('this').insertAdjacentElement('beforeend',input);
+                //     document.getElementById('this').insertAdjacentText('beforeend',afterText);
+                // }
                 break;
             case 'ArrowRight':
                 if(this.nextSibling){
@@ -360,6 +374,9 @@ function keydownEvents(e){
                     this.parentElement.removeAttribute('id','this');
                     document.getElementById('this').insertAdjacentElement('afterbegin',input);
                 }
+                break;
+            case 'Backspace':
+                console.log('BS');
                 break;
         }
     }
