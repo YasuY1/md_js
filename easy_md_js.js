@@ -50,6 +50,7 @@ function bOLMaker(e){
         input.focus();
         input.removeEventListener('keydown',bOLMaker);//e.ley === Enterの重なり防止
         input.addEventListener('input',tagChenger);
+        input.addEventListener('keydown',pressBackspace);
     }
 }
 
@@ -138,6 +139,10 @@ function createHr(elem){//水平線-----
     if(input.value === '*** '){
         const tag = document.createElement('hr');
         elem.parentNode.replaceWith(tag);
+        printArea.insertAdjacentHTML('beforeend','<p>');
+        printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        input.value = '';
+        input.focus();
     }
 }//-----
 
@@ -221,3 +226,19 @@ function listEnter(e){
     }
 }
 //---
+
+function pressBackspace(e){
+    if(e.key === 'Backspace' && input.value === '' && this.previousSibling){
+        this.previousSibling.textContent = this.previousSibling.textContent.slice(0,-1);
+        if(this.previousSibling.textContent === ''){
+            this.parentElement.removeChild(this.previousSibling);
+        }
+    }
+    if(e.key === 'Backspace' && input.value === '' && !this.previousSibling && this.parentElement.previousSibling){
+        this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+        input.focus();
+        this.parentElement.nextSibling.remove();
+        this.parentElement.setAttribute('id','this');
+        inputStyleChenger();
+    }
+}
