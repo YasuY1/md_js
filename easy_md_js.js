@@ -72,6 +72,10 @@ function tagChenger(){
     createHeadingTag(headingCommands,headingTags,this);
     //リストタグ
     createListTag(listCommands,listTags,this);
+    //引用
+    createBlockQuate(this);
+    //水平線
+    createHr(this);
 
     input.addEventListener('keydown',keydownEvents);
 }
@@ -116,6 +120,26 @@ function createListTag(commands,tags,elem){//リストタグ------
         }
     });
 }//---------
+
+function createBlockQuate(elem){//引用タグ------
+    if(input.value === '> '){
+        const tag = document.createElement('blockquote');
+        elem.parentNode.replaceWith(tag);
+        tag.innerHTML = '<p>';
+        tag.lastElementChild.textContent = '';
+        tag.lastElementChild.setAttribute('id','this');
+        tag.lastElementChild.insertAdjacentElement('beforeend',input);
+        input.value = '';
+        input.focus();
+    }
+}//---------
+
+function createHr(elem){//水平線-----
+    if(input.value === '*** '){
+        const tag = document.createElement('hr');
+        elem.parentNode.replaceWith(tag);
+    }
+}//-----
 
 function keydownEvents(e){
     tagSercher(e);
