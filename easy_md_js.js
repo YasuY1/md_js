@@ -76,7 +76,7 @@ function searchText(e){
                 }
                 for(let n=1; n<Math.floor(thisHeight/thisLineHeight); n++){
                     if(lineCountThis === n){
-                        coodinateX.innerHTML = '';
+                        coodinateX.innerHTML = '';//*
                         for(let i=0; i<lineCountThis; i++){
                             coodinateX.insertAdjacentHTML('beforeend',textBlock[i]);
                             coodinateX.insertAdjacentHTML('beforeend','<br>');
@@ -173,7 +173,6 @@ function pressEnter(e){
             if(e.key === 'Enter' && !e.shiftKey && this.parentNode.tagName !== 'LI'){
                 printArea.insertAdjacentHTML('beforeend','<p>');
                 this.parentNode.removeAttribute('id','this');
-                this.parentNode.nextElementSibling.textContent = '';
                 this.parentNode.nextElementSibling.setAttribute('id','this');
                 input.replaceWith(input.value);
                 document.getElementById('this').insertAdjacentElement('beforeend',input);
@@ -207,7 +206,6 @@ function pressEnter(e){
     if(this.parentElement.tagName !== 'P' && e.key === 'Enter' && !e.shiftKey && this.parentNode.tagName !== 'LI'){
         printArea.insertAdjacentHTML('beforeend','<p>');
         this.parentNode.removeAttribute('id','this');
-        this.parentNode.nextElementSibling.textContent = '';
         this.parentNode.nextElementSibling.setAttribute('id','this');
         input.replaceWith(input.value);
         document.getElementById('this').insertAdjacentElement('beforeend',input);
@@ -287,99 +285,49 @@ function listEnter(e){
 }
 
 function keydownEvents(e){
-    if(printArea.childElementCount > 1 && input.value === ''){
-        if(this.previousSibling){
-            beforeText = this.previousSibling.textContent;
-        }
-        if(this.nextSibling){
-            afterText = this.nextSibling.textContent;
-        }
-        switch(e.key){
-            case 'ArrowUp':
-                this.parentElement.previousSibling.setAttribute('id','this');
-                this.parentElement.removeAttribute('id','this');
-                document.getElementById('this').insertAdjacentElement('beforeend',input);
-                break;
-            case 'ArrowDown':
-                this.parentElement.nextSibling.setAttribute('id','this');
-                this.parentElement.removeAttribute('id','this');
-                document.getElementById('this').insertAdjacentElement('beforeend',input);
-                break;
-            case 'ArrowLeft':
-                if(!this.previousSibling){
-                    console.log('ない');
+    switch(e.key){
+        case 'ArrowUp':
+            // this.parentElement.previousSibling.setAttribute('id','this');
+            // this.parentElement.removeAttribute('id','this');
+            // document.getElementById('this').insertAdjacentElement('beforeend',input);
+            break;
+        case 'ArrowDown':
+        case 'ArrowLeft':
+            if(this.previousSibling){//前に文字がある
+                const originalText = this.previousSibling.textContent;
+                beforeText = originalText.slice(0,-1);
+                afterText = originalText.slice(-1,originalText.length) + afterText;
+                if(afterText.indexOf('undefined')){
+                    afterText = afterText.replace('undefined','');
                 }
-                if(this.previousSibling){
-                    document.getElementById('this').textContent = beforeText.slice(0,-1);
-                    afterText = beforeText.slice(-1,beforeText.length);
-                    document.getElementById('this').insertAdjacentElement('beforeend',input);
-                    document.getElementById('this').insertAdjacentText('beforeend',afterText);
-                }
-                // if(!this.previousSibling && this.parentElement.previousElementSibling.getElementsByTagName('br')){
-                //     const innerTextArray = this.parentElement.previousElementSibling.innerHTML.split('<br>');
-                //     this.parentElement.previousSibling.setAttribute('id','this');
-                //     this.parentElement.removeAttribute('id','this');
-                // }
-                // if(!this.previousSibling){
-                //     c++;
-                //     if(c === 1){
-                //         this.parentElement.previousSibling.setAttribute('id','this');
-                //         this.parentElement.removeAttribute('id','this');
-                //         document.getElementById('this').insertAdjacentElement('beforeend',input);
-                //         beforeText = this.previousSibling.wholeText;
-                //         afterText = '';
-                //     }
-                //     if(c === 2){
-                //         c = 0;
-                //     }
-                // }
-                // if(this.previousSibling){
-                //     const beforeCount = beforeText.length;
-                //     let afterCount;
-                //     if(!this.nextSibling){
-                //         afterText = (beforeText.slice(beforeCount-1,beforeCount)+afterText).replace('undefined','');
-                //     }
-                //     if(this.nextSibling){
-                //         afterCount = afterText.length;
-                //         afterText = beforeText.slice(beforeCount-1,beforeCount)+afterText;
-                //     }
-                //     beforeText = beforeText.slice(0,-1);
-
-                //     document.getElementById('this').innerHTML = beforeText;
-                //     document.getElementById('this').insertAdjacentElement('beforeend',input);
-                //     document.getElementById('this').insertAdjacentText('beforeend',afterText);
-                // }
-                break;
-            case 'ArrowRight':
-                if(this.nextSibling){
-                    const afterCount = afterText.length;
-                    let beforeCount;
-                    if(!this.previousSibling){
-                        beforeText = (beforeText + afterText.slice(0,1)).replace('undefined','');
+                this.previousSibling.textContent = beforeText;
+                this.parentElement.insertAdjacentText('beforeend','');
+                this.nextSibling.textContent = afterText;
+                if(beforeText === ''){
+                    afterText = '';
+                    this.parentElement.removeChild(input);
+                    document.getElementById('this').lastElementChild.insertAdjacentElement('beforebegin',input);
+                    if(beforeText === ''){
+                        this.parentElement.removeChild(this.previousSibling);
+                        this.insertAdjacentText('afterend','');
                     }
-                    if(this.previousSibling){
-                        beforeCount = beforeText.length;
-                        beforeText = beforeText + afterText.slice(0,1);
-                    }
-
-                    afterText = afterText.slice(1,afterCount);
-
-                    document.getElementById('this').textContent = beforeText;
-                    document.getElementById('this').insertAdjacentElement('beforeend',input);
-                    document.getElementById('this').insertAdjacentText('beforeend',afterText);
                 }
-                if(this.nextSibling.textContent === '' && this.parentElement.nextElementSibling){
-                    beforeText = '';
-                    this.parentElement.nextElementSibling.setAttribute('id','this');
-                    this.parentElement.removeAttribute('id','this');
-                    document.getElementById('this').insertAdjacentElement('afterbegin',input);
-                }
-                break;
-            case 'Backspace':
-                console.log('BS');
-                break;
-        }
+                console.log(beforeText);
+                console.log(afterText);
+                console.log(document.getElementById('this').lastElementChild);
+            }
+            if(!this.previousSibling){
+                consonle.log('hello');
+            }
+            if(!this.previousSibling && this.parentElement.previousElementSibling){//前に文字が無い:前の要素がある
+                console.log(this.parentElement.previousElementSibling);
+            }
+            if(!this.previousSibling && !this.parentElement.previousElementSibling){//前に文字が無い:前の要素がない
+                return false;
+            }
+            break;
+        case 'ArrowRight':
+            break;
     }
     input.focus();
 }
-
