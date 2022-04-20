@@ -76,7 +76,7 @@ function tagChenger(){
     input.addEventListener('keydown',keydownEvents);
 }
 
-function createInline(matchStr,replaceStr,code,element){//インライン--------------
+function createInline(matchStr,replaceStr,code,element){//インライン-----
     if(input.value.match(matchStr)){
         const inline = input.value.replace(replaceStr,code).replace(replaceStr,'');
         if(element.parentNode.innerHTML === ''){
@@ -87,9 +87,9 @@ function createInline(matchStr,replaceStr,code,element){//インライン-------
         input.value = '';
         input.focus();
     }
-}//-------------------------------------------------------------------------------
+}//------
 
-function createHeadingTag(commands,tags,elem){//見出し-----------------------------
+function createHeadingTag(commands,tags,elem){//見出し---------
     commands.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
             const tag = document.createElement(tags[index]);
@@ -100,9 +100,9 @@ function createHeadingTag(commands,tags,elem){//見出し-----------------------
             input.focus();
         }
     });
-}//------------------------------------------------------
+}//----------
 
-function createListTag(commands,tags,elem){
+function createListTag(commands,tags,elem){//リストタグ------
     commands.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
             const tag = document.createElement(tags[index]);
@@ -115,7 +115,7 @@ function createListTag(commands,tags,elem){
             input.focus();
         }
     });
-}//---------------------------------------------------
+}//---------
 
 function keydownEvents(e){
     tagSercher(e);
@@ -124,22 +124,72 @@ function keydownEvents(e){
 function tagSercher(e){
     switch(input.parentElement.tagName){
         case 'LI':
-            console.log('li');
+            listEnter(e);
+            break;
+        case 'P':
+            normalEnter(e);
             break;
         default:
-            normalEnter(e);
+            headEnter(e);
             break;
     }
 }
 
+//------Enters
 function normalEnter(e){
+    headEnter(e);
+
+    if(e.key === 'Enter' && e.shiftKey && input.value === ''){
+        input.replaceWith(input.value);
+        document.getElementById('this').insertAdjacentHTML('beforeend','<br>');
+        document.getElementById('this').insertAdjacentElement('beforeend',input);
+        input.value = '';
+        input.style.width = '6px';
+        input.focus();
+    }
+}
+
+function headEnter(e){
     if(e.isComposing){
         return false;
     }
-    if(e.key === 'Enter' && !e.shiftKey){
-        console.log('enter');
+    if(e.key === 'Enter' && !e.shiftKey && input.value === ''){
+        printArea.insertAdjacentHTML('beforeend','<p>');
+        document.getElementById('this').removeChild(input);
+        document.getElementById('this').removeAttribute('id','this');
+        printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        printArea.lastElementChild.setAttribute('id','this');
+        input.focus();
     }
-    if(e.key === 'Enter' && e.shiftKey){
-        console.log('shiftEnter');
+    if(e.key === 'Enter' && !e.shiftKey && input.value !== ''){
+        input.replaceWith(input.value);
+        document.getElementById('this').insertAdjacentElement('beforeend',input);
+        input.value = '';
+        input.style.width = '6px';
+        input.focus();
     }
 }
+
+function listEnter(e){
+    if(e.isComposing){
+        return false;
+    }
+    if(e.key === 'Enter' && !e.shiftKey && input.value !== ''){
+        input.replaceWith(input.value);
+        input.value = '';
+        input.style.width = '6px';
+        document.getElementById('this').insertAdjacentElement('beforeend',input);
+        input.focus();
+    }
+    if(e.key === 'Enter' && !e.shiftKey && input.value === ''){
+        document.getElementById('this').parentElement.insertAdjacentHTML('beforeend','<li>');
+        document.getElementById('this').parentElement.lastElementChild.insertAdjacentElement('beforeend',input);
+        document.getElementById('this').removeAttribute('id','this');
+        input.parentElement.setAttribute('id','this');
+        input.focus();
+    }
+    if(e.key === 'Enter' && e.shiftKey && input.value === ''){
+        console.log('2');
+    }
+}
+//---
