@@ -109,7 +109,6 @@ function searchText(e){
 
         input.focus();
     }
-
 }
 
 function widthExtender(){

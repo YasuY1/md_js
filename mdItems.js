@@ -1,5 +1,5 @@
 const headingTags = [
-    'h1',
+    // 'h1',
     'h2',
     'h3',
     'h4',
@@ -7,7 +7,7 @@ const headingTags = [
 ];
 
 const headingCommands = [
-    [ 'h1 ' , '# ' ],
+    // [ 'h1 ' , '# ' ],
     [ 'h2 ' , '## ' ],
     [ 'h3 ' , '### ' ],
     [ 'h4 ' , '#### ' ],
