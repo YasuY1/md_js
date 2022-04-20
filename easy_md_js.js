@@ -36,13 +36,16 @@ function inputStyleChenger(){
 }
 /*---------- 初期動作終わり -----------*/
 
-/* --------------　本文作成動作 ----------------- */
+/* --------------　メインコントロール ----------------- */
 function bOLMaker(e){
+    if(e.isComposing){
+        return false;
+    }
     if(e.key === 'Enter'){
         input.replaceWith(input.value);
-        input.value = '';
         printArea.insertAdjacentHTML('beforeend','<p>');
         printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        input.value = '';
         inputStyleChenger();
         input.focus();
         input.removeEventListener('keydown',bOLMaker);//e.ley === Enterの重なり防止
@@ -70,10 +73,10 @@ function tagChenger(){
     //リストタグ
     createListTag(listCommands,listTags,this);
 
-    // input.addEventListener('keydown',pressEnter);
+    input.addEventListener('keydown',keydownEvents);
 }
 
-function createInline(matchStr,replaceStr,code,element){
+function createInline(matchStr,replaceStr,code,element){//インライン--------------
     if(input.value.match(matchStr)){
         const inline = input.value.replace(replaceStr,code).replace(replaceStr,'');
         if(element.parentNode.innerHTML === ''){
@@ -82,22 +85,17 @@ function createInline(matchStr,replaceStr,code,element){
         document.getElementById('this').insertAdjacentHTML('beforeend',inline);
         document.getElementById('this').insertAdjacentElement('beforeend',input);
         input.value = '';
-        input.style.width = '6px';
         input.focus();
     }
-}
+}//-------------------------------------------------------------------------------
 
-function createHeadingTag(commands,tags,elem){//----------------------------------------
+function createHeadingTag(commands,tags,elem){//見出し-----------------------------
     commands.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
-            i = 0;
             const tag = document.createElement(tags[index]);
             elem.parentNode.replaceWith(tag);
             tag.textContent = '';
             tag.insertAdjacentElement('beforeend',input);
-            input.style.width = '6px';
-            input.style.fontSize = window.getComputedStyle(elem.parentElement).getPropertyValue('font-size');
-            input.style.fontWeight = window.getComputedStyle(elem.parentElement).getPropertyValue('font-weight');
             input.value = '';
             input.focus();
         }
@@ -107,7 +105,6 @@ function createHeadingTag(commands,tags,elem){//--------------------------------
 function createListTag(commands,tags,elem){
     commands.forEach(function(command,index){
         if(input.value === command[0] || input.value === command[1]){
-            i = 0;
             const tag = document.createElement(tags[index]);
             elem.parentNode.replaceWith(tag);
             tag.innerHTML = '<li>';
@@ -116,8 +113,33 @@ function createListTag(commands,tags,elem){
             tag.lastElementChild.insertAdjacentElement('beforeend',input);
             input.value = '';
             input.focus();
-            // input.removeEventListener('keydown',pressEnter);
-            // input.addEventListener('keydown',listEnter);
         }
     });
+}//---------------------------------------------------
+
+function keydownEvents(e){
+    tagSercher(e);
+}
+
+function tagSercher(e){
+    switch(input.parentElement.tagName){
+        case 'LI':
+            console.log('li');
+            break;
+        default:
+            normalEnter(e);
+            break;
+    }
+}
+
+function normalEnter(e){
+    if(e.isComposing){
+        return false;
+    }
+    if(e.key === 'Enter' && !e.shiftKey){
+        console.log('enter');
+    }
+    if(e.key === 'Enter' && e.shiftKey){
+        console.log('shiftEnter');
+    }
 }
