@@ -189,7 +189,11 @@ function listEnter(e){
         input.focus();
     }
     if(e.key === 'Enter' && e.shiftKey && input.value === ''){
-        console.log('2');
+        document.getElementById('this').parentElement.removeChild(document.getElementById('this'));
+        printArea.insertAdjacentHTML('beforeend','<p>');
+        printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        printArea.lastElementChild.setAttribute('id','this');
+        input.focus();
     }
 }
 //---
