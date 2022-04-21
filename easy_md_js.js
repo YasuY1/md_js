@@ -51,6 +51,7 @@ function bOLMaker(e){
         input.removeEventListener('keydown',bOLMaker);//e.ley === Enterの重なり防止
         input.addEventListener('input',tagChenger);
         input.addEventListener('keydown',pressBackspace);
+        input.addEventListener('keydown',pressArrows);
     }
 }
 
@@ -89,6 +90,7 @@ function createInline(matchStr,replaceStr,code,element){//インライン-----
         }
         document.getElementById('this').insertAdjacentHTML('beforeend',inline);
         document.getElementById('this').insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
         input.value = '';
         input.focus();
     }
@@ -101,6 +103,7 @@ function createHeadingTag(commands,tags,elem){//見出し---------
             elem.parentNode.replaceWith(tag);
             tag.textContent = '';
             tag.insertAdjacentElement('beforeend',input);
+            inputStyleChenger();
             input.value = '';
             input.focus();
         }
@@ -116,6 +119,7 @@ function createListTag(commands,tags,elem){//リストタグ------
             tag.lastElementChild.textContent = '';
             tag.lastElementChild.setAttribute('id','this');
             tag.lastElementChild.insertAdjacentElement('beforeend',input);
+            inputStyleChenger();
             input.value = '';
             input.focus();
         }
@@ -130,6 +134,7 @@ function createBlockQuate(elem){//引用タグ------
         tag.lastElementChild.textContent = '';
         tag.lastElementChild.setAttribute('id','this');
         tag.lastElementChild.insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
         input.value = '';
         input.focus();
     }
@@ -141,6 +146,7 @@ function createHr(elem){//水平線-----
         elem.parentNode.replaceWith(tag);
         printArea.insertAdjacentHTML('beforeend','<p>');
         printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
         input.value = '';
         input.focus();
     }
@@ -187,6 +193,7 @@ function headEnter(e){
         document.getElementById('this').removeChild(input);
         document.getElementById('this').removeAttribute('id','this');
         printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
         printArea.lastElementChild.setAttribute('id','this');
         input.focus();
     }
@@ -235,6 +242,7 @@ function pressBackspace(e){
         }
         if(this.previousSibling === null && this.parentElement.tagName === 'LI' && this.parentElement.parentElement.childElementCount === 1){
             this.parentElement.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+            inputStyleChenger();
             input.focus();
             this.parentElement.nextSibling.remove();
             this.parentElement.setAttribute('id','this');
@@ -243,9 +251,66 @@ function pressBackspace(e){
     }
     if(e.key === 'Backspace' && input.value === '' && !this.previousSibling && this.parentElement.previousSibling){
         this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
         input.focus();
         this.parentElement.nextSibling.remove();
         this.parentElement.setAttribute('id','this');
         inputStyleChenger();
+    }
+}//---
+
+function pressArrows(e){
+    switch(e.key){
+        case 'ArrowUp':
+            break;
+        case 'ArrowDown':
+            break;
+        case 'ArrowLeft':
+            this.insertAdjacentText('afterend',this.previousSibling.textContent.slice(-1,this.previousSibling.textContent.length));
+            this.previousSibling.textContent = this.previousSibling.textContent.slice(0,-1);
+            if(this.nextSibling.nextSibling){
+                this.nextSibling.textContent = this.nextSibling.textContent + this.nextSibling.nextSibling.textContent;
+                this.nextSibling.nextSibling.remove();
+            }
+            if(this.previousSibling.textContent === ''){
+                input.addEventListener('keydown',skipBefore,{once:true});
+            }
+            break;
+        case 'ArrowRight':
+            if(!this.nextSibling || this.nextSibling.textContent === '' && !this.parentElement.nextSibling && this.previousSibling){
+                return false;
+            }
+            this.insertAdjacentText('beforebegin',this.nextSibling.textContent.slice(0,1));
+            this.nextSibling.textContent = this.nextSibling.textContent.slice(1,this.nextSibling.textContent.length);
+            if(this.previousSibling.previousSibling){
+                this.previousSibling.textContent = this.previousSibling.previousSibling.textContent + this.previousSibling.textContent;
+                this.previousSibling.previousSibling.remove();
+            }
+            if(this.nextSibling.textContent === ''){
+                input.addEventListener('keydown',skipAfter,{once:true});
+            }
+            break;
+    }
+}
+
+function skipBefore(e){
+    if(e.key === 'ArrowLeft'){
+        if(this.parentElement.tagName === 'H1'){
+            return false;
+        }
+        this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+        input.focus();
+    }
+}
+
+function skipAfter(e){
+    if(e.key === 'ArrowRight'){
+        if(this.parentElement.nextSibling){
+            this.parentElement.nextSibling.insertAdjacentElement('afterbegin',input);
+        }
+        if(this.nextSibling.textContent === ''){
+            this.nextSibling.remove();
+        }
+        input.focus();
     }
 }
