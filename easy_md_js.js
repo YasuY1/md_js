@@ -233,6 +233,13 @@ function pressBackspace(e){
         if(this.previousSibling.textContent === ''){
             this.parentElement.removeChild(this.previousSibling);
         }
+        if(this.previousSibling === null && this.parentElement.tagName === 'LI' && this.parentElement.parentElement.childElementCount === 1){
+            this.parentElement.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+            input.focus();
+            this.parentElement.nextSibling.remove();
+            this.parentElement.setAttribute('id','this');
+            inputStyleChenger();
+        }
     }
     if(e.key === 'Backspace' && input.value === '' && !this.previousSibling && this.parentElement.previousSibling){
         this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
