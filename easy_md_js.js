@@ -8,7 +8,7 @@ markdown.addEventListener('click',serchText,{
     once:true
 });
 
-input.addEventListener('keydown',keydownEvents);
+input.addEventListener('keydown',enterActions);
 input.addEventListener('input',widthExtender);
 input.addEventListener('input',tagChanger);
 
@@ -21,13 +21,14 @@ function serchText(){
     }
 }
 
-function keydownEvents(e){
+function enterActions(e){
     if(e.isComposing){
         return false;
     }
     if(e.shiftKey && e.key === 'Enter'){
         switch(input.parentElement.tagName){
             case 'LI':
+                exitList();
                 break;
             case 'P':
                 indention();
@@ -39,6 +40,8 @@ function keydownEvents(e){
     if(!e.shiftKey && e.key === 'Enter'){
         switch(input.parentElement.tagName){
             case 'LI':
+                toNextList();
+                toNextSibling();
                 break;
             case 'P':
                 exitP();
@@ -132,6 +135,33 @@ function exitP(){
     }
 }
 
+function toNextList(){
+    if(!input.value){
+        input.parentElement.insertAdjacentHTML('beforeend','<li>');
+        input.parentElement.lastElementChild.insertAdjacentElement('beforeend',input);
+        document.getElementById('this').removeAttribute('id','this');
+        input.parentElement.setAttribute('id','this');
+        input.value = '';
+        input.focus();
+        inputStyleChenger();
+    }
+}
+
+function exitList(){
+    if(!input.value){
+        if(input.parentElement.textContent === ''){
+            input.parentElement.remove();
+        }
+        printArea.insertAdjacentHTML('beforeend','<p>');
+        printArea.lastElementChild.insertAdjacentElement('beforeend',input);
+        if(document.getElementById('this')){
+            document.getElementById('this').removeAttribute('id','this');
+        }
+        printArea.lastElementChild.setAttribute('id','this');
+        input.focus();
+    }
+}
+
 
 
 function tagChanger(){
@@ -158,7 +188,7 @@ function tagChanger(){
     //水平線
     createHr(this);
 
-    input.addEventListener('keydown',keydownEvents);
+    input.addEventListener('keydown',enterActions);
 }
 
 function createInline(matchStr,replaceStr,code,element){//インライン-----
