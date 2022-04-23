@@ -11,6 +11,7 @@ markdown.addEventListener('click',serchText,{
 input.addEventListener('keydown',enterActions);
 input.addEventListener('input',widthExtender);
 input.addEventListener('input',tagChanger);
+input.addEventListener('keydown',pressBackspace);
 
 
 function serchText(){
@@ -115,6 +116,16 @@ function noIndention(){
         input.value = '';
         input.focus();
         input.style.width = '6px';
+        const inlineTag = input.parentElement.lastElementChild.previousElementSibling;
+        if(inlineTag.nextSibling.nextSibling){
+            inlineTag.nextSibling.textContent = inlineTag.nextSibling.textContent + inlineTag.nextSibling.nextSibling.textContent;
+            inlineTag.nextSibling.nextSibling.remove();
+            inlineTag.parentElement.insertAdjacentElement('beforeend',input);
+            input.focus();
+        }
+        if(inlineTag){
+            return false;
+        }
         if(input.previousSibling.previousSibling && input.previousSibling.previousSibling.tagName !== 'BR'){
             input.previousSibling.textContent = input.previousSibling.previousSibling.textContent + input.previousSibling.textContent;
             input.previousSibling.previousSibling.remove();
@@ -260,3 +271,28 @@ function createHr(elem){//水平線-----
         input.focus();
     }
 }//-----
+
+function pressBackspace(e){
+    if(e.key === 'Backspace' && input.value === '' && this.previousSibling){
+        this.previousSibling.textContent = this.previousSibling.textContent.slice(0,-1);
+        if(this.previousSibling.textContent === ''){
+            this.parentElement.removeChild(this.previousSibling);
+        }
+        if(this.previousSibling === null && this.parentElement.tagName === 'LI' && this.parentElement.parentElement.childElementCount === 1){
+            this.parentElement.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+            inputStyleChenger();
+            input.focus();
+            this.parentElement.nextSibling.remove();
+            this.parentElement.setAttribute('id','this');
+            inputStyleChenger();
+        }
+    }
+    if(e.key === 'Backspace' && input.value === '' && !this.previousSibling && this.parentElement.previousSibling){
+        this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
+        inputStyleChenger();
+        input.focus();
+        this.parentElement.nextSibling.remove();
+        this.parentElement.setAttribute('id','this');
+        inputStyleChenger();
+    }
+}//---
