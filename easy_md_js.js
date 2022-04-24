@@ -12,12 +12,13 @@ input.addEventListener('keydown',enterActions);
 input.addEventListener('input',widthExtender);
 input.addEventListener('input',tagChanger);
 input.addEventListener('keydown',pressBackspace);
+input.addEventListener('keydown',pressArrows);
 
 
 function serchText(){
     if(printArea.firstChild.textContent === ''){
         printArea.firstElementChild.insertAdjacentElement('beforeend',input);
-        inputStyleChenger();
+        inputStyleChanger();
         input.focus();
     }
 }
@@ -68,7 +69,7 @@ function widthExtender(){
     input.style.width = window.getComputedStyle(span).getPropertyValue('width');
 }
 
-function inputStyleChenger(){//-補助関数
+function inputStyleChanger(){//-補助関数
     input.style.width = '6px';
     input.style.fontSize = window.getComputedStyle(input.parentElement).getPropertyValue('font-size');
     input.style.fontWeight = window.getComputedStyle(input.parentElement).getPropertyValue('font-weight');
@@ -83,7 +84,7 @@ function toNextLine(){
         input.parentElement.setAttribute('id','this');
         input.value = '';
         input.focus();
-        inputStyleChenger();
+        inputStyleChanger();
     }
 }
 
@@ -109,6 +110,8 @@ function indention(){
     }
 }
 
+let inlineTag;
+
 function noIndention(){
     if(input.value){
         input.replaceWith(input.value);
@@ -116,15 +119,23 @@ function noIndention(){
         input.value = '';
         input.focus();
         input.style.width = '6px';
-        const inlineTag = input.parentElement.lastElementChild.previousElementSibling;
-        if(inlineTag.nextSibling.nextSibling){
-            inlineTag.nextSibling.textContent = inlineTag.nextSibling.textContent + inlineTag.nextSibling.nextSibling.textContent;
-            inlineTag.nextSibling.nextSibling.remove();
-            inlineTag.parentElement.insertAdjacentElement('beforeend',input);
-            input.focus();
-        }
-        if(inlineTag){
-            return false;
+        if(input.previousElementSibling && input.previousElementSibling.tagName !== 'BR'){
+            inlineTag = input.previousElementSibling;
+            if(inlineTag.nextSibling.nextSibling){
+                inlineTag.nextSibling.textContent = inlineTag.nextSibling.textContent + inlineTag.nextSibling.nextSibling.textContent;
+                inlineTag.nextSibling.nextSibling.remove();
+                inlineTag.parentElement.insertAdjacentElement('beforeend',input);
+                input.focus();
+            }
+            if(inlineTag.previousSibling.previousSiblingg && input.previousElementSibling.tagName !== 'BR'){
+                inlineTag.previousSibling.textContent = inlineTag.previousSibling.previousSibling.textContent + inlineTag.previousSibling.textContent;
+                inlineTag.previousSibling.previousSibling.remove();
+                inlineTag.parentElement.insertAdjacentElement('beforeend',input);
+                input.focus();
+            }
+            if(inlineTag){
+                return false;
+            }
         }
         if(input.previousSibling.previousSibling && input.previousSibling.previousSibling.tagName !== 'BR'){
             input.previousSibling.textContent = input.previousSibling.previousSibling.textContent + input.previousSibling.textContent;
@@ -154,7 +165,7 @@ function toNextList(){
         input.parentElement.setAttribute('id','this');
         input.value = '';
         input.focus();
-        inputStyleChenger();
+        inputStyleChanger();
     }
 }
 
@@ -210,7 +221,7 @@ function createInline(matchStr,replaceStr,code,element){//インライン-----
         }
         document.getElementById('this').insertAdjacentHTML('beforeend',inline);
         document.getElementById('this').insertAdjacentElement('beforeend',input);
-        inputStyleChenger();
+        inputStyleChanger();
         input.value = '';
         input.focus();
     }
@@ -223,7 +234,7 @@ function createHeadingTag(commands,tags,elem){//見出し---------
             elem.parentNode.replaceWith(tag);
             tag.textContent = '';
             tag.insertAdjacentElement('beforeend',input);
-            inputStyleChenger();
+            inputStyleChanger();
             input.value = '';
             input.focus();
         }
@@ -239,7 +250,7 @@ function createListTag(commands,tags,elem){//リストタグ------
             tag.lastElementChild.textContent = '';
             tag.lastElementChild.setAttribute('id','this');
             tag.lastElementChild.insertAdjacentElement('beforeend',input);
-            inputStyleChenger();
+            inputStyleChanger();
             input.value = '';
             input.focus();
         }
@@ -254,7 +265,7 @@ function createBlockQuate(elem){//引用タグ------
         tag.lastElementChild.textContent = '';
         tag.lastElementChild.setAttribute('id','this');
         tag.lastElementChild.insertAdjacentElement('beforeend',input);
-        inputStyleChenger();
+        inputStyleChanger();
         input.value = '';
         input.focus();
     }
@@ -266,7 +277,7 @@ function createHr(elem){//水平線-----
         elem.parentNode.replaceWith(tag);
         printArea.insertAdjacentHTML('beforeend','<p>');
         printArea.lastElementChild.insertAdjacentElement('beforeend',input);
-        inputStyleChenger();
+        inputStyleChanger();
         input.value = '';
         input.focus();
     }
@@ -280,19 +291,91 @@ function pressBackspace(e){
         }
         if(this.previousSibling === null && this.parentElement.tagName === 'LI' && this.parentElement.parentElement.childElementCount === 1){
             this.parentElement.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
-            inputStyleChenger();
             input.focus();
             this.parentElement.nextSibling.remove();
             this.parentElement.setAttribute('id','this');
-            inputStyleChenger();
+            inputStyleChanger();
         }
     }
     if(e.key === 'Backspace' && input.value === '' && !this.previousSibling && this.parentElement.previousSibling){
         this.parentElement.previousSibling.insertAdjacentElement('beforeend',input);
-        inputStyleChenger();
         input.focus();
         this.parentElement.nextSibling.remove();
         this.parentElement.setAttribute('id','this');
-        inputStyleChenger();
+        inputStyleChanger();
     }
 }//---
+
+function pressArrows(e){
+    switch(e.key){
+        case 'ArrowUp':
+            if(!this.parentElement.previousElementSibling){
+                return false;
+            }
+            if(this.parentElement.previousElementSibling.tagName === 'UL' && this.parentElement.previousElementSibling.tagName === 'OL'){
+                console.log(this.parentElement.parentElement);
+            }
+            // const beforeElement = this.parentElement.previousSibling;
+            // let textLength = this.previousSibling.textContent.length
+            // if(!beforeElement){
+            //     return false;
+            // }
+            // if(textLength > beforeElement.textContent.length){
+            //     textLength = beforeElement.textContent.length;
+            // }
+            // const afterText = beforeElement.textContent.slice(textLength,beforeElement.textContent.length);
+            // beforeElement.textContent = beforeElement.textContent.slice(0,textLength);
+            // beforeElement.insertAdjacentElement('beforeend',input);
+            // this.parentElement.insertAdjacentText('beforeend',afterText);
+            // input.focus();
+            break;
+        case 'ArrowDown':
+            break;
+        case 'ArrowLeft':
+            if(this.previousElementSibling && this.previousSibling.textContent === '' && this.previousSibling.tagName !== 'BR'){
+                this.previousElementSibling.insertAdjacentElement('beforeend',input);
+                input.focus();
+            }
+            if(this.previousSibling.textContent === ''){
+                if(this.parentElement.tagName === 'EM' || this.parentElement.tagName === 'STRONG' || this.parentElement.tagName === 'DEL' || this.parentElement.tagName === 'CODE'){
+                    this.parentElement.insertAdjacentElement('beforebegin',input);
+                    input.focus();
+                }
+            }
+            this.insertAdjacentText('afterend',this.previousSibling.textContent.slice(-1,this.previousSibling.textContent.length));
+            this.previousSibling.textContent = this.previousSibling.textContent.slice(0,-1);
+            if(this.nextSibling.nextSibling && !this.nextElementSibling && !this.nextSibling.nextElementSibling){
+                this.nextSibling.textContent = this.nextSibling.textContent + this.nextSibling.nextSibling.textContent;
+                this.nextSibling.nextSibling.remove();
+            }
+            if(this.previousSibling.textContent === '' && this.previousElementSibling && this.previousElementSibling.tagName === 'BR'){
+                this.previousElementSibling.insertAdjacentElement('beforebegin',input);
+                input.focus();
+            }
+            break;
+        case 'ArrowRight':
+            // if(this.nextElementSibling && this.nextSibling.textContent === ''){
+            //     this.nextElementSibling.insertAdjacentElement('afterbegin',input);
+            //     input.focus();
+            // }
+            // if(this.nextSibling.textContent === ''){
+            //     if(this.parentElement.tagName === 'EM' || this.parentElement.tagName === 'STRONG' || this.parentElement.tagName === 'DEL' || this.parentElement.tagName === 'CODE'){
+            //         this.parentElement.insertAdjacentElement('afterend',input);
+            //         input.focus();
+            //     }
+            // }
+            this.insertAdjacentText('beforebegin',this.nextSibling.textContent.slice(0,1));
+            this.nextSibling.textContent = this.nextSibling.textContent.slice(1,this.nextSibling.textContent.length);
+            // if(this.previousSibling.previousSibling && !this.previousElementSibling && !this.previousSibling.previousElementSibling){
+            //     this.previousSibling.textContent = this.previousSibling.previousSibling.textContent + this.previousSibling.textContent;
+            //     this.previousSibling.previousSibling.remove();
+            // }
+            // input.focus();
+            break;
+    }
+}
+
+function listArrowUp(){
+    input.parentElement.previousElementSibling.lastElementChild.insertAdjacentElement('beforeend',input);
+    input.focus();
+}
